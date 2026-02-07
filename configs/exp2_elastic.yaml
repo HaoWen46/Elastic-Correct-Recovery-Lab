@@ -1,0 +1,27 @@
+seed: 1337
+dataset:
+  name: cifar10
+  root: ./data
+  train: true
+  download: true
+  size: 50000
+training:
+  global_batch: 256
+  lr: 0.1
+  momentum: 0.9
+  weight_decay: 0.0005
+  max_steps: 800
+  log_every: 1
+  debug_every: 100
+checkpoint:
+  strategy: blocking
+  every_k_steps: 50
+  max_inflight: 4
+failure:
+  enabled: false
+  steps: []
+elastic:
+  phase_a_steps: 400
+  phase_b_steps: 800
+  phase_a_world_size: 4
+  phase_b_world_size: 2
