@@ -170,9 +170,18 @@ scripts/run_exp2_elastic.sh 4 2
 - Checkpoints: `results/checkpoints/<run_id>/step_XXXXXXXX.pt`
 - Latest pointer: `results/checkpoints/<run_id>/latest.json`
 - Metrics: `results/metrics/<run_id>/...`
-- Plots:
-- `results/plots/loss_curves_exp1.png`, `results/plots/goodput_exp1.png`
-- `results/plots/loss_curves_exp2.png`, `results/plots/goodput_exp2.png`
+- Plots (Exp1): `results/plots/loss_curves_exp1.png`, `results/plots/goodput_exp1.png`
+- Plots (Exp2): `results/plots/loss_curves_exp2.png`, `results/plots/goodput_exp2.png`
+- Final summary: `results/final_summary.md`
+
+## Validation
+
+Run unit tests (inside the venv):
+
+```bash
+source .venv/bin/activate
+python -m unittest discover -s tests -v
+```
 
 ## Notes
 
