@@ -6,3 +6,6 @@ __pycache__/
 # Runtime outputs
 results/*
 !results/.gitkeep
+
+# Local datasets
+data/

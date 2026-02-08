@@ -14,6 +14,21 @@ REF_RUN="exp1_reference"
 BLK_RUN="exp1_failure_blocking"
 OVL_RUN="exp1_failure_overlapped"
 
+ensure_cifar() {
+  mkdir -p data
+  if [ -d data/cifar-10-batches-py ]; then
+    return
+  fi
+  if [ ! -f data/cifar-10-python.tar.gz ]; then
+    curl -L --fail --retry 3 --retry-delay 2 \
+      -o data/cifar-10-python.tar.gz \
+      https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+  fi
+  tar -xzf data/cifar-10-python.tar.gz -C data
+}
+
+ensure_cifar
+
 python -m ecrl.orchestration.supervisor \
   --config "${CONFIG}" \
   --run-id "${REF_RUN}" \
@@ -59,4 +74,4 @@ done
 python -m ecrl.metrics.divergence --reference-run "${REF_RUN}" --candidate-run "${BLK_RUN}" --results-dir "${RESULTS_DIR}" --steps "200,400,800"
 python -m ecrl.metrics.divergence --reference-run "${REF_RUN}" --candidate-run "${OVL_RUN}" --results-dir "${RESULTS_DIR}" --steps "200,400,800"
 
-python -m ecrl.metrics.plot --results-dir "${RESULTS_DIR}" --run-ids "${REF_RUN},${BLK_RUN},${OVL_RUN}"
+python -m ecrl.metrics.plot --results-dir "${RESULTS_DIR}" --run-ids "${REF_RUN},${BLK_RUN},${OVL_RUN}" --output-prefix exp1

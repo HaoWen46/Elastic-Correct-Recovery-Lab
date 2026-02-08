@@ -37,6 +37,8 @@ python -m pip install --upgrade pip wheel setuptools
 pip install -r requirements.txt
 ```
 
+Experiment scripts auto-download/extract CIFAR10 into `./data` if missing.
+
 ## Repository Layout
 
 ```text
@@ -168,7 +170,9 @@ scripts/run_exp2_elastic.sh 4 2
 - Checkpoints: `results/checkpoints/<run_id>/step_XXXXXXXX.pt`
 - Latest pointer: `results/checkpoints/<run_id>/latest.json`
 - Metrics: `results/metrics/<run_id>/...`
-- Plots: `results/plots/loss_curves.png`, `results/plots/goodput.png`
+- Plots:
+- `results/plots/loss_curves_exp1.png`, `results/plots/goodput_exp1.png`
+- `results/plots/loss_curves_exp2.png`, `results/plots/goodput_exp2.png`
 
 ## Notes
 

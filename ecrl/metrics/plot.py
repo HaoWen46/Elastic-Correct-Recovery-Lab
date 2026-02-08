@@ -43,10 +43,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="ECRL plotting")
     parser.add_argument("--results-dir", type=str, default="results")
     parser.add_argument("--run-ids", type=str, required=True, help="comma-separated")
+    parser.add_argument("--output-prefix", type=str, default="")
     args = parser.parse_args()
 
     results_dir = Path(args.results_dir)
     run_ids = [x.strip() for x in args.run_ids.split(",") if x.strip()]
+    suffix = f"_{args.output_prefix}" if args.output_prefix else ""
 
     plot_dir = results_dir / "plots"
     plot_dir.mkdir(parents=True, exist_ok=True)
@@ -61,7 +63,7 @@ def main() -> None:
     plt.title("Loss Curves (Rank 0, committed trajectory)")
     plt.legend()
     plt.tight_layout()
-    plt.savefig(plot_dir / "loss_curves.png", dpi=150)
+    plt.savefig(plot_dir / f"loss_curves{suffix}.png", dpi=150)
     plt.close()
 
     goods: List[float] = []
@@ -79,7 +81,7 @@ def main() -> None:
         plt.title("Goodput Comparison")
         plt.xticks(rotation=20, ha="right")
         plt.tight_layout()
-        plt.savefig(plot_dir / "goodput.png", dpi=150)
+        plt.savefig(plot_dir / f"goodput{suffix}.png", dpi=150)
         plt.close()
 
 

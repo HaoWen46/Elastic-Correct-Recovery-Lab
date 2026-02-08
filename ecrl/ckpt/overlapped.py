@@ -179,19 +179,42 @@ class OverlappedPeriodicCheckpointer:
             return
 
         if wait:
-            while self._inflight:
-                item = self._wait_for_one_completion()
-                if self.metrics_logger is not None:
-                    self.metrics_logger(
-                        {
-                            "event": "checkpoint_write_complete",
-                            "global_step": int(item["global_step"]),
-                            "write_time_sec": float(item["write_time_sec"]),
-                        }
-                    )
+            self.flush(wait=True)
 
         self._task_q.put(None)
         self._proc.join(timeout=30)
         if self._proc.is_alive():
             self._proc.terminate()
             self._proc.join(timeout=5)
+
+    def flush(self, wait: bool = True) -> None:
+        """Drain completed writes and optionally wait for all inflight writes."""
+        if self.rank != 0:
+            return
+        if self._done_q is None:
+            return
+
+        completed = self._drain_done_nonblocking()
+        if self.metrics_logger is not None:
+            for step, write_time in completed.items():
+                self.metrics_logger(
+                    {
+                        "event": "checkpoint_write_complete",
+                        "global_step": int(step),
+                        "write_time_sec": float(write_time),
+                    }
+                )
+
+        if not wait:
+            return
+
+        while self._inflight:
+            item = self._wait_for_one_completion()
+            if self.metrics_logger is not None:
+                self.metrics_logger(
+                    {
+                        "event": "checkpoint_write_complete",
+                        "global_step": int(item["global_step"]),
+                        "write_time_sec": float(item["write_time_sec"]),
+                    }
+                )
