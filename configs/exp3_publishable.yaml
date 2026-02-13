@@ -1,17 +1,24 @@
 seed: 1337
 dataset:
-  name: cifar10
+  name: cifar100
   root: ./data
   train: true
   download: true
   size: 50000
+  image_size: 32
 training:
-  model_name: small_cnn
+  model_name: resnet34
+  precision: bf16
+  use_augmentation: true
+  scheduler: cosine
+  scheduler_t_max: 1200
+  scheduler_eta_min: 0.000001
+  max_grad_norm: 1.0
   global_batch: 256
-  lr: 0.1
+  lr: 0.05
   momentum: 0.9
   weight_decay: 0.0005
-  max_steps: 1000
+  max_steps: 1200
   log_every: 1
   debug_every: 100
 checkpoint:
@@ -20,4 +27,4 @@ checkpoint:
   max_inflight: 4
 failure:
   enabled: true
-  steps: [200, 600]
+  steps: [300, 900]

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import nullcontext
 import hashlib
 import json
 import os
@@ -8,7 +9,7 @@ import random
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Iterable, List
+from typing import Any, Dict, Iterable, List, Tuple
 
 import numpy as np
 import torch
@@ -18,13 +19,12 @@ import torch.optim as optim
 import yaml
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader
-from torchvision import transforms
-from torchvision.datasets import FakeData
+from torchvision import models, transforms
 
 from ecrl.ckpt.atomic_writer import read_latest
 from ecrl.ckpt.blocking import BlockingPeriodicCheckpointer
 from ecrl.ckpt.overlapped import OverlappedPeriodicCheckpointer
-from ecrl.data.cifar_with_ids import CIFAR10WithIDs
+from ecrl.data import CIFAR10WithIDs, CIFAR100WithIDs, FakeDataWithIDs, ImageFolderWithIDs
 from ecrl.sampler.resumable_sampler import ResumableGlobalBatchSampler
 from ecrl.statepack.statepack import capture_state, load_payload, restore_state
 
@@ -114,8 +114,16 @@ def _load_config(path: str | Path) -> Dict[str, Any]:
         return yaml.safe_load(f)
 
 
+_CIFAR10_MEAN = (0.4914, 0.4822, 0.4465)
+_CIFAR10_STD = (0.2470, 0.2435, 0.2616)
+_CIFAR100_MEAN = (0.5071, 0.4867, 0.4408)
+_CIFAR100_STD = (0.2675, 0.2565, 0.2761)
+_IMAGENET_MEAN = (0.485, 0.456, 0.406)
+_IMAGENET_STD = (0.229, 0.224, 0.225)
+
+
 class SmallCifarNet(nn.Module):
-    """A lightweight CNN for fast evaluation-focused runs."""
+    """A lightweight CNN for fast evaluation-focused runs on 32x32 inputs."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -138,16 +146,158 @@ class SmallCifarNet(nn.Module):
         return self.classifier(self.features(x))
 
 
-def _build_model() -> nn.Module:
-    return SmallCifarNet()
+def _build_transforms(
+    dataset_name: str,
+    image_size: int,
+    *,
+    train: bool,
+    use_augmentation: bool,
+) -> transforms.Compose:
+    if dataset_name == "cifar10":
+        ops: List[Any] = []
+        if train and use_augmentation:
+            ops.extend(
+                [
+                    transforms.RandomCrop(32, padding=4),
+                    transforms.RandomHorizontalFlip(),
+                ]
+            )
+        ops.extend(
+            [
+                transforms.ToTensor(),
+                transforms.Normalize(_CIFAR10_MEAN, _CIFAR10_STD),
+            ]
+        )
+        return transforms.Compose(ops)
+    if dataset_name == "cifar100":
+        ops: List[Any] = []
+        if train and use_augmentation:
+            ops.extend(
+                [
+                    transforms.RandomCrop(32, padding=4),
+                    transforms.RandomHorizontalFlip(),
+                ]
+            )
+        ops.extend(
+            [
+                transforms.ToTensor(),
+                transforms.Normalize(_CIFAR100_MEAN, _CIFAR100_STD),
+            ]
+        )
+        return transforms.Compose(ops)
+    if dataset_name == "imagefolder":
+        if train and use_augmentation:
+            return transforms.Compose(
+                [
+                    transforms.RandomResizedCrop(image_size),
+                    transforms.RandomHorizontalFlip(),
+                    transforms.ToTensor(),
+                    transforms.Normalize(_IMAGENET_MEAN, _IMAGENET_STD),
+                ]
+            )
+        return transforms.Compose(
+            [
+                transforms.Resize(image_size),
+                transforms.CenterCrop(image_size),
+                transforms.ToTensor(),
+                transforms.Normalize(_IMAGENET_MEAN, _IMAGENET_STD),
+            ]
+        )
+    if dataset_name == "fake":
+        return transforms.Compose(
+            [
+                transforms.ToTensor(),
+                transforms.Normalize(_CIFAR10_MEAN, _CIFAR10_STD),
+            ]
+        )
+    raise ValueError(f"unsupported dataset.name: {dataset_name}")
 
 
-class FakeDataWithIDs(FakeData):
-    """Fallback/testing dataset that mirrors (x, y, sample_id) contract."""
+def _prepare_dataset(
+    *,
+    dataset_cfg: Dict[str, Any],
+    rt: Runtime,
+    transform: transforms.Compose,
+) -> Tuple[Any, int]:
+    dataset_name = str(dataset_cfg.get("name", "cifar10")).lower()
+    dataset_root = dataset_cfg.get("root", "./data")
+    dataset_train = bool(dataset_cfg.get("train", True))
+    dataset_download = bool(dataset_cfg.get("download", True))
 
-    def __getitem__(self, index: int) -> tuple[torch.Tensor, int, int]:
-        x, y = super().__getitem__(index)
-        return x, y, index
+    if dataset_name == "cifar10":
+        if dataset_download and rt.rank == 0:
+            CIFAR10WithIDs(
+                root=dataset_root,
+                train=dataset_train,
+                transform=transform,
+                download=True,
+            )
+        _barrier(rt)
+        dataset = CIFAR10WithIDs(
+            root=dataset_root,
+            train=dataset_train,
+            transform=transform,
+            download=False,
+        )
+        return dataset, 10
+
+    if dataset_name == "cifar100":
+        if dataset_download and rt.rank == 0:
+            CIFAR100WithIDs(
+                root=dataset_root,
+                train=dataset_train,
+                transform=transform,
+                download=True,
+            )
+        _barrier(rt)
+        dataset = CIFAR100WithIDs(
+            root=dataset_root,
+            train=dataset_train,
+            transform=transform,
+            download=False,
+        )
+        return dataset, 100
+
+    if dataset_name == "imagefolder":
+        split_subdir = str(dataset_cfg.get("split_subdir", "train"))
+        folder = Path(dataset_root) / split_subdir
+        dataset = ImageFolderWithIDs(root=str(folder), transform=transform)
+        return dataset, len(dataset.classes)
+
+    if dataset_name == "fake":
+        image_size = int(dataset_cfg.get("image_size", 32))
+        num_classes = int(dataset_cfg.get("num_classes", 10))
+        dataset = FakeDataWithIDs(
+            size=int(dataset_cfg.get("size", 50_000)),
+            image_size=(3, image_size, image_size),
+            num_classes=num_classes,
+            transform=transform,
+        )
+        return dataset, num_classes
+
+    raise ValueError(f"unsupported dataset.name: {dataset_name}")
+
+
+def _build_model(model_name: str, num_classes: int, image_size: int) -> nn.Module:
+    name = model_name.lower()
+    if name == "small_cnn":
+        if image_size != 32:
+            raise ValueError("small_cnn expects image_size=32")
+        return SmallCifarNet()
+    if name == "resnet18":
+        return models.resnet18(weights=None, num_classes=num_classes)
+    if name == "resnet34":
+        return models.resnet34(weights=None, num_classes=num_classes)
+    if name == "resnet50":
+        return models.resnet50(weights=None, num_classes=num_classes)
+    if name == "efficientnet_b0":
+        return models.efficientnet_b0(weights=None, num_classes=num_classes)
+    if name == "mobilenet_v3_large":
+        return models.mobilenet_v3_large(weights=None, num_classes=num_classes)
+    raise ValueError(
+        f"unsupported training.model_name: {model_name}. "
+        "Choose one of: small_cnn,resnet18,resnet34,resnet50,efficientnet_b0,mobilenet_v3_large"
+    )
 
 
 def _resolve_resume_path(args: argparse.Namespace, checkpoint_dir: Path) -> str | None:
@@ -159,6 +309,28 @@ def _resolve_resume_path(args: argparse.Namespace, checkpoint_dir: Path) -> str 
             return None
         return latest["path"]
     return None
+
+
+def _autocast_and_scaler(
+    *,
+    precision: str,
+    device: torch.device,
+) -> Tuple[Any, torch.cuda.amp.GradScaler | None]:
+    p = precision.lower()
+    if p not in ("fp32", "bf16", "fp16"):
+        raise ValueError("training.precision must be one of: fp32,bf16,fp16")
+
+    if device.type != "cuda" or p == "fp32":
+        return nullcontext, None
+    if p == "bf16":
+        return (
+            lambda: torch.autocast(device_type="cuda", dtype=torch.bfloat16),
+            None,
+        )
+    return (
+        lambda: torch.autocast(device_type="cuda", dtype=torch.float16),
+        torch.cuda.amp.GradScaler(),
+    )
 
 
 def main() -> None:
@@ -206,45 +378,17 @@ def main() -> None:
 
         failure_enabled = bool(failure_cfg.get("enabled", False)) and not args.disable_failure
         fail_steps = set(_parse_fail_steps(args.fail_steps, failure_cfg.get("steps", [])))
-
-        transform = transforms.Compose(
-            [
-                transforms.ToTensor(),
-                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2470, 0.2435, 0.2616)),
-            ]
-        )
-
         dataset_name = str(dataset_cfg.get("name", "cifar10")).lower()
-        if dataset_name == "cifar10":
-            dataset_root = dataset_cfg.get("root", "./data")
-            dataset_train = bool(dataset_cfg.get("train", True))
-            dataset_download = bool(dataset_cfg.get("download", True))
-
-            # Avoid concurrent multi-rank download races.
-            if dataset_download and rt.rank == 0:
-                CIFAR10WithIDs(
-                    root=dataset_root,
-                    train=dataset_train,
-                    transform=transform,
-                    download=True,
-                )
-            _barrier(rt)
-
-            dataset = CIFAR10WithIDs(
-                root=dataset_root,
-                train=dataset_train,
-                transform=transform,
-                download=False,
-            )
-        elif dataset_name == "fake":
-            dataset = FakeDataWithIDs(
-                size=int(dataset_cfg.get("size", 50_000)),
-                image_size=(3, 32, 32),
-                num_classes=10,
-                transform=transform,
-            )
-        else:
-            raise ValueError(f"unsupported dataset.name: {dataset_name}")
+        dataset_train = bool(dataset_cfg.get("train", True))
+        use_augmentation = bool(training_cfg.get("use_augmentation", False))
+        image_size = int(dataset_cfg.get("image_size", 32 if dataset_name in ("cifar10", "cifar100", "fake") else 224))
+        transform = _build_transforms(
+            dataset_name=dataset_name,
+            image_size=image_size,
+            train=dataset_train,
+            use_augmentation=use_augmentation,
+        )
+        dataset, num_classes = _prepare_dataset(dataset_cfg=dataset_cfg, rt=rt, transform=transform)
 
         dataset_size = len(dataset)
         if "size" in dataset_cfg and int(dataset_cfg["size"]) != dataset_size:
@@ -263,7 +407,8 @@ def main() -> None:
         )
         steps_per_epoch = sampler.steps_per_epoch
 
-        model = _build_model().to(rt.device)
+        model_name = str(training_cfg.get("model_name", "small_cnn"))
+        model = _build_model(model_name=model_name, num_classes=num_classes, image_size=image_size).to(rt.device)
         if rt.is_distributed:
             ddp_model = DDP(
                 model,
@@ -279,7 +424,21 @@ def main() -> None:
             momentum=float(training_cfg.get("momentum", 0.9)),
             weight_decay=float(training_cfg.get("weight_decay", 5e-4)),
         )
-        scheduler = None
+        scheduler_name = str(training_cfg.get("scheduler", "none")).lower()
+        if scheduler_name == "none":
+            scheduler = None
+        elif scheduler_name == "cosine":
+            scheduler = optim.lr_scheduler.CosineAnnealingLR(
+                optimizer,
+                T_max=int(training_cfg.get("scheduler_t_max", target_steps)),
+                eta_min=float(training_cfg.get("scheduler_eta_min", 0.0)),
+            )
+        else:
+            raise ValueError("training.scheduler must be one of: none,cosine")
+
+        precision = str(training_cfg.get("precision", "fp32")).lower()
+        autocast_ctx, grad_scaler = _autocast_and_scaler(precision=precision, device=rt.device)
+        max_grad_norm = float(training_cfg.get("max_grad_norm", 0.0))
         criterion = nn.CrossEntropyLoss().to(rt.device)
 
         run_root = Path(args.results_dir)
@@ -371,10 +530,22 @@ def main() -> None:
                 y = y.to(rt.device, non_blocking=True)
 
                 optimizer.zero_grad(set_to_none=True)
-                logits = ddp_model(x)
-                loss = criterion(logits, y)
-                loss.backward()
-                optimizer.step()
+                with autocast_ctx():
+                    logits = ddp_model(x)
+                    loss = criterion(logits, y)
+
+                if grad_scaler is not None:
+                    grad_scaler.scale(loss).backward()
+                    if max_grad_norm > 0.0:
+                        grad_scaler.unscale_(optimizer)
+                        torch.nn.utils.clip_grad_norm_(ddp_model.parameters(), max_grad_norm)
+                    grad_scaler.step(optimizer)
+                    grad_scaler.update()
+                else:
+                    loss.backward()
+                    if max_grad_norm > 0.0:
+                        torch.nn.utils.clip_grad_norm_(ddp_model.parameters(), max_grad_norm)
+                    optimizer.step()
                 if scheduler is not None:
                     scheduler.step()
 
@@ -393,6 +564,8 @@ def main() -> None:
                     "loss": float(loss.detach().cpu().item()),
                     "sample_ids_hash": _hash_ids(sample_ids),
                     "sample_ids_count": int(sample_ids.numel()),
+                    "lr": float(optimizer.param_groups[0]["lr"]),
+                    "precision": precision,
                 }
                 rank_log.log(step_record)
 

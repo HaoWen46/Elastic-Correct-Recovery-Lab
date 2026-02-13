@@ -45,6 +45,8 @@ def _build_cmd(args: argparse.Namespace, resume_latest: bool) -> List[str]:
         "--max-inflight",
         str(args.max_inflight),
     ]
+    if args.seed is not None:
+        cmd.extend(["--seed", str(args.seed)])
 
     if args.fail_steps:
         cmd.extend(["--fail-steps", args.fail_steps])
@@ -66,6 +68,7 @@ def main() -> None:
     parser.add_argument("--checkpoint-strategy", type=str, choices=["blocking", "overlapped"], default="blocking")
     parser.add_argument("--checkpoint-every", type=int, default=50)
     parser.add_argument("--max-inflight", type=int, default=4)
+    parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--fail-steps", type=str, default="")
     parser.add_argument("--disable-failure", action="store_true")
     parser.add_argument("--max-restarts", type=int, default=20)

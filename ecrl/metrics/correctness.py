@@ -66,12 +66,13 @@ def main() -> None:
     parser.add_argument("--run-id", type=str, required=True)
     parser.add_argument("--results-dir", type=str, default="results")
     parser.add_argument("--target-steps", type=int, default=None)
+    parser.add_argument("--seed", type=int, default=None)
     args = parser.parse_args()
 
     cfg = yaml.safe_load(Path(args.config).read_text(encoding="utf-8"))
     global_batch = int(cfg["training"]["global_batch"])
     dataset_size = int(cfg.get("dataset", {}).get("size", 50_000))
-    seed = int(cfg.get("seed", 1337))
+    seed = int(args.seed if args.seed is not None else cfg.get("seed", 1337))
 
     logs_dir = Path(args.results_dir) / "logs" / args.run_id
     records = _load_run_records(logs_dir)

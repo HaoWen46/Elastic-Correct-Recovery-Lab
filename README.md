@@ -31,13 +31,13 @@ This repository is an evaluation + semantics project for DDP Data Parallel train
 ## Setup
 
 ```bash
-python3.11 -m venv .venv
+uv venv --python 3.11.2 .venv
 source .venv/bin/activate
-python -m pip install --upgrade pip wheel setuptools
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
 
-Experiment scripts auto-download/extract CIFAR10 into `./data` if missing.
+This project uses an `uv`-managed virtual environment (`.venv`) for all Python work.
+Experiment scripts auto-download/extract CIFAR10/CIFAR100 into `./data` if missing.
 
 ## Repository Layout
 
@@ -48,8 +48,12 @@ ecrl/
   configs/
     exp1_failure.yaml
     exp2_elastic.yaml
+    exp3_publishable.yaml
+    exp3_publishable_1gpu.yaml
+    exp3_publishable_4gpu.yaml
   ecrl/
     data/cifar_with_ids.py
+    data/datasets_with_ids.py
     sampler/resumable_sampler.py
     statepack/statepack.py
     statepack/rng.py
@@ -62,9 +66,12 @@ ecrl/
     metrics/goodput.py
     metrics/divergence.py
     metrics/plot.py
+    metrics/aggregate.py
+    metrics/report_publishable.py
   scripts/
     run_exp1_failure.sh
     run_exp2_elastic.sh
+    run_exp3_publishable.sh
   results/
 ```
 
@@ -72,7 +79,35 @@ ecrl/
 
 ### Dataset with IDs
 
-`CIFAR10WithIDs` returns `(x, y, sample_id)` where `sample_id` is dataset index.
+Supported dataset wrappers return `(x, y, sample_id)` where `sample_id` is dataset index:
+
+- `CIFAR10WithIDs`
+- `CIFAR100WithIDs`
+- `ImageFolderWithIDs`
+- `FakeDataWithIDs`
+
+Supported `dataset.name` values:
+
+- `cifar10`
+- `cifar100`
+- `imagefolder` (reads `<root>/<split_subdir>`)
+- `fake`
+
+Supported `training.model_name` values:
+
+- `small_cnn`
+- `resnet18`
+- `resnet34`
+- `resnet50`
+- `efficientnet_b0`
+- `mobilenet_v3_large`
+
+Recommended scaling knobs for larger runs:
+
+- `training.precision`: `fp32`, `bf16`, `fp16` (CUDA only for bf16/fp16)
+- `training.scheduler`: `none`, `cosine`
+- `training.use_augmentation`: `true`/`false`
+- `training.max_grad_norm`: gradient clipping threshold (`0` disables)
 
 ### Resumable Sampler
 
@@ -133,6 +168,7 @@ Checkpoint timing (rank 0):
 - `goodput.py`: `goodput = useful_steps / wall_clock_time`, plus replay/restart and checkpoint stall breakdown.
 - `divergence.py`: model distance at fixed steps (`200, 400, 800`) and loss divergence stats.
 - `plot.py`: loss curves and goodput comparison plots.
+- `aggregate.py`: multi-run aggregation (mean/std/95% CI) for publishable reporting.
 
 ## Experiments
 
@@ -151,6 +187,11 @@ scripts/run_exp1_failure.sh 4
 ```
 
 Use `2` instead of `4` if resources are limited.
+Common overrides:
+
+```bash
+TARGET=300 FAIL_STEPS=120,240 K=25 SEED=1337 scripts/run_exp1_failure.sh 2
+```
 
 ### Exp2: Elastic Resume
 
@@ -164,6 +205,54 @@ Command:
 ```bash
 scripts/run_exp2_elastic.sh 4 2
 ```
+
+Common overrides:
+
+```bash
+TARGET_FINAL=400 PHASE_A_TARGET=200 K=25 SEED=1337 scripts/run_exp2_elastic.sh 2 1
+```
+
+### Exp3: Publishable-Mode (Larger Model + Dataset + Multi-Seed)
+
+Defaults:
+
+- Dataset: CIFAR100
+- Model: ResNet34
+- Seeds: `1337,2027,4242`
+- Precision: `bf16` (falls back to `fp32` on CPU/MPS)
+
+Command:
+
+```bash
+scripts/run_exp3_publishable.sh 4
+```
+
+Alternate presets:
+
+```bash
+CONFIG=configs/exp3_publishable_1gpu.yaml scripts/run_exp3_publishable.sh 1
+CONFIG=configs/exp3_publishable_4gpu.yaml scripts/run_exp3_publishable.sh 4
+```
+
+Common overrides:
+
+```bash
+SEEDS_CSV=1337,2027 TARGET=800 CHECKPOINT_EVERY=40 MAX_INFLIGHT=4 scripts/run_exp3_publishable.sh 4
+```
+
+Aggregate outputs:
+
+- `results/metrics/_aggregate/exp3_reference.json`
+- `results/metrics/_aggregate/exp3_failure_blocking.json`
+- `results/metrics/_aggregate/exp3_failure_overlapped.json`
+- `results/reports/exp3_publishable.md`
+- `results/reports/exp3_publishable.json`
+
+Budget notes:
+
+- Single consumer GPU / laptop: use `NPROC=1..2`, keep `model_name=resnet18`, reduce `TARGET`.
+- 24GB+ GPU: `resnet34` and `global_batch=256` are typically viable.
+- Multi-GPU server: use `NPROC=4` and keep global batch fixed as required.
 
 ## Typical Outputs
 
@@ -180,7 +269,7 @@ Run unit tests (inside the venv):
 
 ```bash
 source .venv/bin/activate
-python -m unittest discover -s tests -v
+uv run --python .venv/bin/python -m unittest discover -s tests -v
 ```
 
 ## Notes

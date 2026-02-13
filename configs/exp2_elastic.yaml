@@ -6,6 +6,7 @@ dataset:
   download: true
   size: 50000
 training:
+  model_name: small_cnn
   global_batch: 256
   lr: 0.1
   momentum: 0.9
