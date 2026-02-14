@@ -641,6 +641,16 @@ def main() -> None:
                                 f"[ECRL][fail-inject] step={global_step} flush_done_sec="
                                 f"{time.perf_counter() - flush_start:.3f}"
                             )
+                    if strategy == "overlapped":
+                        if rt.rank == 0:
+                            print(
+                                f"[ECRL][fail-inject] step={global_step} "
+                                "skipping barrier for overlapped failure injection; rank0 exiting with 137"
+                            )
+                            os._exit(137)
+                        # Wait for elastic agent to terminate non-zero ranks after rank0 failure.
+                        while True:
+                            time.sleep(1.0)
                     if rt.rank == 0:
                         print(f"[ECRL][fail-inject] step={global_step} entering barrier before exit")
                     _barrier(rt)

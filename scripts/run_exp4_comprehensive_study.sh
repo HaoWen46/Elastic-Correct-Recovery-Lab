@@ -179,6 +179,7 @@ import inspect
 import sys
 from ecrl.ckpt.overlapped import OverlappedPeriodicCheckpointer
 from ecrl.statepack import rng
+from ecrl.train import ddp_train
 
 src = inspect.getsource(rng.restore_rng_state)
 if "_as_cpu_byte_tensor" not in src:
@@ -187,6 +188,10 @@ if "_as_cpu_byte_tensor" not in src:
 src_ovl = inspect.getsource(OverlappedPeriodicCheckpointer.flush)
 if "_ensure_worker_alive" not in src_ovl:
     print("missing_overlapped_flush_patch")
+    sys.exit(1)
+src_train = inspect.getsource(ddp_train.main)
+if "skipping barrier for overlapped failure injection" not in src_train:
+    print("missing_overlapped_fail_inject_patch")
     sys.exit(1)
 print("ok")
 PY
