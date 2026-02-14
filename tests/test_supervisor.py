@@ -5,7 +5,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from ecrl.orchestration.supervisor import _checkpoint_snapshot, _decode_return_code, _infer_failure_hint
+from ecrl.orchestration.supervisor import (
+    _checkpoint_snapshot,
+    _decode_return_code,
+    _infer_failure_hint,
+    _is_fatal_failure_hint,
+)
 
 
 class TestSupervisorHelpers(unittest.TestCase):
@@ -54,6 +59,10 @@ class TestSupervisorHelpers(unittest.TestCase):
             )
             hint = _infer_failure_hint(1, attempt_log_path=log_path)
             self.assertEqual(hint, "rng_state_type_mismatch")
+
+    def test_fatal_failure_hint_classification(self) -> None:
+        self.assertTrue(_is_fatal_failure_hint("rng_state_type_mismatch"))
+        self.assertFalse(_is_fatal_failure_hint("cuda_oom"))
 
 
 if __name__ == "__main__":

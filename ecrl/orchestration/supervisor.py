@@ -107,6 +107,14 @@ def _checkpoint_snapshot(ckpt_dir: Path, latest: Dict[str, Any] | None) -> Dict[
     }
 
 
+def _is_fatal_failure_hint(hint: str | None) -> bool:
+    if hint is None:
+        return False
+    return hint in {
+        "rng_state_type_mismatch",
+    }
+
+
 def _build_cmd(args: argparse.Namespace, resume_latest: bool) -> List[str]:
     cmd = [
         sys.executable,
@@ -240,6 +248,12 @@ def main() -> None:
 
         if ret == 0:
             break
+
+        if _is_fatal_failure_hint(failure_hint):
+            raise RuntimeError(
+                "training failed with a non-retryable error hint: "
+                f"{failure_hint}. See attempt log: {attempt_log_path}"
+            )
 
         if latest is not None and not latest_path_exists:
             raise RuntimeError(

@@ -493,6 +493,25 @@ def main() -> None:
         resume_path = _resolve_resume_path(args, ckpt_dir)
         if resume_path:
             payload = load_payload(resume_path, map_location=rt.device)
+            if rt.rank == 0:
+                rng_cpu = payload.get("rng", {}).get("torch_cpu")
+                if isinstance(rng_cpu, torch.Tensor):
+                    rng_info = {
+                        "type": "tensor",
+                        "dtype": str(rng_cpu.dtype),
+                        "device": str(rng_cpu.device),
+                        "shape": tuple(int(v) for v in rng_cpu.shape),
+                    }
+                else:
+                    rng_info = {
+                        "type": type(rng_cpu).__name__,
+                    }
+                print(
+                    "[ECRL][resume] "
+                    f"path={resume_path} "
+                    f"global_step={payload.get('step_state', {}).get('global_step')} "
+                    f"rng_cpu={rng_info}"
+                )
             step_state = restore_state(
                 payload,
                 model=ddp_model.module if isinstance(ddp_model, DDP) else ddp_model,
