@@ -120,6 +120,9 @@ def _build_cmd(args: argparse.Namespace, *, resume_latest: bool, master_port: in
         sys.executable,
         "-m",
         "torch.distributed.run",
+        # Let this supervisor own restart policy; avoid nested elastic retries.
+        "--max-restarts",
+        "0",
         "--nnodes",
         "1",
         "--nproc_per_node",
