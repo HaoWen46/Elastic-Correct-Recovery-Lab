@@ -218,6 +218,21 @@ def main() -> None:
                 "attempt_log_path": str(attempt_log_path),
             },
         )
+        running_status: Dict[str, Any] = {
+            "time": attempt_start,
+            "status": "running",
+            "attempt": attempts,
+            "attempts": attempts,
+            "restarts": restarts,
+            "restarts_without_checkpoint_total": restarts_without_checkpoint_total,
+            "restarts_without_checkpoint_streak": restarts_without_checkpoint_streak,
+            "target_steps": int(args.target_steps),
+            "resume_latest": resume_latest,
+            "master_port": current_master_port,
+            "attempt_start_time": attempt_start,
+            "attempt_log_path": str(attempt_log_path),
+        }
+        supervisor_path.write_text(json.dumps(running_status, indent=2, sort_keys=True), encoding="utf-8")
         ret = _run_cmd(cmd, output_log_path=attempt_log_path)
 
         latest = read_latest(ckpt_dir)
