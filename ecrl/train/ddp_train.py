@@ -72,15 +72,23 @@ def _init_runtime() -> Runtime:
     local_rank = int(os.environ.get("LOCAL_RANK", "0"))
     is_distributed = world_size > 1
 
-    if is_distributed:
-        backend = "nccl" if torch.cuda.is_available() else "gloo"
-        dist.init_process_group(backend=backend)
-
     if torch.cuda.is_available():
         torch.cuda.set_device(local_rank)
         device = torch.device(f"cuda:{local_rank}")
     else:
         device = torch.device("cpu")
+
+    if is_distributed:
+        backend = "nccl" if device.type == "cuda" else "gloo"
+        if backend == "nccl":
+            # Pin NCCL to the local CUDA device to avoid ambiguous rank->GPU mapping.
+            try:
+                dist.init_process_group(backend=backend, device_id=local_rank)
+            except TypeError:
+                # Older torch builds may not support init_process_group(device_id=...).
+                dist.init_process_group(backend=backend)
+        else:
+            dist.init_process_group(backend=backend)
 
     return Runtime(
         rank=rank,
@@ -106,7 +114,10 @@ def _seed_everything(seed: int) -> None:
 
 def _barrier(rt: Runtime) -> None:
     if rt.is_distributed and dist.is_initialized():
-        dist.barrier()
+        if rt.device.type == "cuda":
+            dist.barrier(device_ids=[rt.local_rank])
+        else:
+            dist.barrier()
 
 
 def _load_config(path: str | Path) -> Dict[str, Any]:

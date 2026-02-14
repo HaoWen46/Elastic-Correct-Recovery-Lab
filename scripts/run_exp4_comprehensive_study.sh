@@ -36,6 +36,9 @@ REQUIRE_CUDA="${REQUIRE_CUDA:-1}"
 MASTER_ADDR="${MASTER_ADDR:-127.0.0.1}"
 MASTER_PORT_BASE="${MASTER_PORT_BASE:-34000}"
 NEXT_PORT="${MASTER_PORT_BASE}"
+MAX_RESTARTS="${MAX_RESTARTS:-20}"
+MAX_RESTARTS_NO_CKPT="${MAX_RESTARTS_NO_CKPT:-3}"
+RESTART_DELAY_SEC="${RESTART_DELAY_SEC:-1.0}"
 
 TARGET_STEPS="${TARGET_STEPS:-1600}"
 PHASE_A_TARGET="${PHASE_A_TARGET:-800}"
@@ -331,6 +334,9 @@ run_supervisor() {
     --seed "${seed}"
     --master-addr "${MASTER_ADDR}"
     --master-port "${port}"
+    --max-restarts "${MAX_RESTARTS}"
+    --max-restarts-without-checkpoint "${MAX_RESTARTS_NO_CKPT}"
+    --restart-delay-sec "${RESTART_DELAY_SEC}"
   )
 
   if [ "${strategy}" = "overlapped" ]; then
