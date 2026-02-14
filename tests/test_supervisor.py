@@ -10,6 +10,7 @@ from ecrl.orchestration.supervisor import (
     _decode_return_code,
     _infer_failure_hint,
     _is_fatal_failure_hint,
+    _next_master_port,
 )
 
 
@@ -63,6 +64,10 @@ class TestSupervisorHelpers(unittest.TestCase):
     def test_fatal_failure_hint_classification(self) -> None:
         self.assertTrue(_is_fatal_failure_hint("rng_state_type_mismatch"))
         self.assertFalse(_is_fatal_failure_hint("cuda_oom"))
+
+    def test_next_master_port_wraps_after_65535(self) -> None:
+        self.assertEqual(_next_master_port(34000), 34001)
+        self.assertEqual(_next_master_port(65535), 1024)
 
 
 if __name__ == "__main__":

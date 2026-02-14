@@ -115,7 +115,7 @@ def _is_fatal_failure_hint(hint: str | None) -> bool:
     }
 
 
-def _build_cmd(args: argparse.Namespace, resume_latest: bool) -> List[str]:
+def _build_cmd(args: argparse.Namespace, *, resume_latest: bool, master_port: int) -> List[str]:
     cmd = [
         sys.executable,
         "-m",
@@ -127,7 +127,7 @@ def _build_cmd(args: argparse.Namespace, resume_latest: bool) -> List[str]:
         "--master_addr",
         args.master_addr,
         "--master_port",
-        str(args.master_port),
+        str(master_port),
         "-m",
         "ecrl.train.ddp_train",
         "--config",
@@ -156,6 +156,12 @@ def _build_cmd(args: argparse.Namespace, resume_latest: bool) -> List[str]:
         cmd.append("--resume-latest")
 
     return cmd
+
+
+def _next_master_port(port: int) -> int:
+    if port >= 65535:
+        return 1024
+    return int(port) + 1
 
 
 def main() -> None:
@@ -191,11 +197,12 @@ def main() -> None:
     restarts_without_checkpoint_total = 0
     restarts_without_checkpoint_streak = 0
     resume_latest = bool(args.start_resume_latest)
+    current_master_port = int(args.master_port)
     start_time = time.time()
 
     while True:
         attempts += 1
-        cmd = _build_cmd(args, resume_latest=resume_latest)
+        cmd = _build_cmd(args, resume_latest=resume_latest, master_port=current_master_port)
         attempt_log_path = logs_dir / f"attempt_{attempts:03d}.log"
         attempt_start = time.time()
         _append_jsonl(
@@ -205,6 +212,7 @@ def main() -> None:
                 "event": "attempt_start",
                 "attempt": attempts,
                 "resume_latest": resume_latest,
+                "master_port": current_master_port,
                 "cmd": cmd,
                 "cmd_shell": shlex.join(cmd),
                 "attempt_log_path": str(attempt_log_path),
@@ -233,6 +241,7 @@ def main() -> None:
             "latest_step": latest_step,
             "target_steps": int(args.target_steps),
             "resume_latest": resume_latest,
+            "master_port": current_master_port,
             "attempt_duration_sec": attempt_duration,
             "attempt_log_path": str(attempt_log_path),
             "checkpoint_snapshot": ckpt_info,
@@ -273,17 +282,22 @@ def main() -> None:
                 )
             restarts += 1
             resume_latest = False
+            restart_reason = "no_checkpoint_yet"
+            if failure_hint == "master_port_in_use":
+                restart_reason = "master_port_in_use"
+                current_master_port = _next_master_port(current_master_port)
             _append_jsonl(
                 attempts_path,
                 {
                     "time": time.time(),
                     "event": "restart",
-                    "reason": "no_checkpoint_yet",
+                    "reason": restart_reason,
                     "attempt": attempts,
                     "restarts": restarts,
                     "restarts_without_checkpoint_total": restarts_without_checkpoint_total,
                     "restarts_without_checkpoint_streak": restarts_without_checkpoint_streak,
                     "resume_latest": resume_latest,
+                    "master_port": current_master_port,
                 },
             )
             time.sleep(args.restart_delay_sec)
