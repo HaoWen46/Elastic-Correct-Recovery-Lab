@@ -626,12 +626,26 @@ def main() -> None:
                 )
 
                 if failure_enabled and global_step in fail_steps:
+                    if rt.rank == 0:
+                        print(
+                            f"[ECRL][fail-inject] step={global_step} strategy={strategy} "
+                            "starting pre-exit flush/barrier"
+                        )
                     # Ensure asynchronous checkpoint writes are durably persisted before
                     # an injected crash at this step boundary.
                     if hasattr(checkpointer, "flush"):
+                        flush_start = time.perf_counter()
                         checkpointer.flush(wait=True)
+                        if rt.rank == 0:
+                            print(
+                                f"[ECRL][fail-inject] step={global_step} flush_done_sec="
+                                f"{time.perf_counter() - flush_start:.3f}"
+                            )
+                    if rt.rank == 0:
+                        print(f"[ECRL][fail-inject] step={global_step} entering barrier before exit")
                     _barrier(rt)
                     if rt.rank == 0:
+                        print(f"[ECRL][fail-inject] step={global_step} rank0 exiting with 137")
                         os._exit(137)
 
             if sampler.cursor_step >= steps_per_epoch:

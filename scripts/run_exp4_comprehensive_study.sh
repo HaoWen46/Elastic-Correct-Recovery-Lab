@@ -177,16 +177,21 @@ verify_runtime_patches() {
   patch_status="$(run_py - <<'PY'
 import inspect
 import sys
+from ecrl.ckpt.overlapped import OverlappedPeriodicCheckpointer
 from ecrl.statepack import rng
 
 src = inspect.getsource(rng.restore_rng_state)
 if "_as_cpu_byte_tensor" not in src:
     print("missing_rng_patch")
     sys.exit(1)
+src_ovl = inspect.getsource(OverlappedPeriodicCheckpointer.flush)
+if "_ensure_worker_alive" not in src_ovl:
+    print("missing_overlapped_flush_patch")
+    sys.exit(1)
 print("ok")
 PY
   )" || {
-    echo "Runtime patch check failed: ecrl.statepack.rng.restore_rng_state is missing ByteTensor normalization." >&2
+    echo "Runtime patch check failed: required recovery patches are missing." >&2
     echo "Sync latest code to this workstation before running Exp4." >&2
     exit 1
   }
