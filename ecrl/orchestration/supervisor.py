@@ -86,6 +86,8 @@ def _infer_failure_hint(ret: int, *, attempt_log_path: Path) -> str | None:
         return "elastic_agent_received_sighup"
     if "CUDA out of memory" in tail:
         return "cuda_oom"
+    if "RNG state must be a torch.ByteTensor" in tail:
+        return "rng_state_type_mismatch"
     if "Address already in use" in tail or "EADDRINUSE" in tail:
         return "master_port_in_use"
     return None

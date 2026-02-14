@@ -30,7 +30,7 @@ RUN_PREFIX="${RUN_PREFIX:-${STUDY_NAME}_${RUN_STAMP}}"
 RESULTS_DIR="${RESULTS_DIR:-results/${RUN_PREFIX}}"
 
 PYTHON_BIN="${PYTHON_BIN:-.venv/bin/python}"
-VENV_PYTHON="${VENV_PYTHON:-3.11}"
+VENV_PYTHON="${VENV_PYTHON:-}"
 SETUP_ENV="${SETUP_ENV:-1}"
 REQUIRE_CUDA="${REQUIRE_CUDA:-1}"
 
@@ -151,10 +151,14 @@ ensure_env() {
   if [ ! -x "${PYTHON_BIN}" ]; then
     if [ "${PYTHON_BIN}" = ".venv/bin/python" ]; then
       local venv_python="${VENV_PYTHON}"
-      if command -v python3 >/dev/null 2>&1; then
-        venv_python="python3"
-      elif command -v python >/dev/null 2>&1; then
-        venv_python="python"
+      if [ -z "${venv_python}" ]; then
+        if command -v python3 >/dev/null 2>&1; then
+          venv_python="python3"
+        elif command -v python >/dev/null 2>&1; then
+          venv_python="python"
+        else
+          venv_python="3.11"
+        fi
       fi
       uv venv --python "${venv_python}" .venv
     else

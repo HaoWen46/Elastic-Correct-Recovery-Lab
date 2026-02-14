@@ -45,6 +45,16 @@ class TestSupervisorHelpers(unittest.TestCase):
             hint = _infer_failure_hint(1, attempt_log_path=log_path)
             self.assertEqual(hint, "torchrun_received_sighup")
 
+    def test_infer_failure_hint_for_rng_state_type_mismatch(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            log_path = Path(td) / "attempt.log"
+            log_path.write_text(
+                "TypeError: RNG state must be a torch.ByteTensor\n",
+                encoding="utf-8",
+            )
+            hint = _infer_failure_hint(1, attempt_log_path=log_path)
+            self.assertEqual(hint, "rng_state_type_mismatch")
+
 
 if __name__ == "__main__":
     unittest.main()
