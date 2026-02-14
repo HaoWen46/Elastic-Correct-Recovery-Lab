@@ -30,6 +30,7 @@ RUN_PREFIX="${RUN_PREFIX:-${STUDY_NAME}_${RUN_STAMP}}"
 RESULTS_DIR="${RESULTS_DIR:-results/${RUN_PREFIX}}"
 
 PYTHON_BIN="${PYTHON_BIN:-.venv/bin/python}"
+VENV_PYTHON="${VENV_PYTHON:-3.11}"
 SETUP_ENV="${SETUP_ENV:-1}"
 REQUIRE_CUDA="${REQUIRE_CUDA:-1}"
 
@@ -149,7 +150,13 @@ ensure_env() {
 
   if [ ! -x "${PYTHON_BIN}" ]; then
     if [ "${PYTHON_BIN}" = ".venv/bin/python" ]; then
-      uv venv --python 3.11.2 .venv
+      local venv_python="${VENV_PYTHON}"
+      if command -v python3 >/dev/null 2>&1; then
+        venv_python="python3"
+      elif command -v python >/dev/null 2>&1; then
+        venv_python="python"
+      fi
+      uv venv --python "${venv_python}" .venv
     else
       echo "Missing Python interpreter at ${PYTHON_BIN}" >&2
       exit 1
