@@ -77,6 +77,19 @@ class OverlappedPeriodicCheckpointer:
             self._proc = ctx.Process(target=_io_worker, args=(self._task_q, self._done_q), daemon=True)
             self._proc.start()
 
+    def _ensure_worker_alive(self) -> None:
+        if self.rank != 0:
+            return
+        if self._proc is None:
+            return
+        if self._proc.is_alive():
+            return
+        inflight_steps = sorted(int(s) for s in self._inflight.keys())
+        raise RuntimeError(
+            "overlapped checkpoint I/O worker exited unexpectedly "
+            f"(exitcode={self._proc.exitcode}); pending_steps={inflight_steps}"
+        )
+
     def _drain_done_nonblocking(self) -> Dict[int, float]:
         completions: Dict[int, float] = {}
         if self.rank != 0 or self._done_q is None:
@@ -92,10 +105,16 @@ class OverlappedPeriodicCheckpointer:
             self._inflight.pop(step, None)
         return completions
 
-    def _wait_for_one_completion(self) -> Dict[str, Any]:
+    def _wait_for_one_completion(self, *, timeout_sec: float | None = None) -> Dict[str, Any] | None:
         if self._done_q is None:
             raise RuntimeError("done queue missing")
-        item = self._done_q.get()
+        try:
+            if timeout_sec is None:
+                item = self._done_q.get()
+            else:
+                item = self._done_q.get(timeout=float(timeout_sec))
+        except queue.Empty:
+            return None
         step = int(item["global_step"])
         self._inflight.pop(step, None)
         return item
@@ -132,7 +151,19 @@ class OverlappedPeriodicCheckpointer:
 
             wait_start = time.perf_counter()
             while len(self._inflight) >= self.max_inflight:
-                item = self._wait_for_one_completion()
+                item = self._wait_for_one_completion(timeout_sec=5.0)
+                if item is None:
+                    self._ensure_worker_alive()
+                    if self.metrics_logger is not None:
+                        self.metrics_logger(
+                            {
+                                "event": "checkpoint_backpressure_waiting",
+                                "pending_count": int(len(self._inflight)),
+                                "pending_steps": [int(s) for s in sorted(self._inflight.keys())[:16]],
+                                "wait_time_sec": float(time.perf_counter() - wait_start),
+                            }
+                        )
+                    continue
                 completed_write_times[int(item["global_step"])] = float(item["write_time_sec"])
             backpressure_wait = time.perf_counter() - wait_start
 
@@ -208,8 +239,21 @@ class OverlappedPeriodicCheckpointer:
         if not wait:
             return
 
+        wait_start = time.perf_counter()
         while self._inflight:
-            item = self._wait_for_one_completion()
+            item = self._wait_for_one_completion(timeout_sec=5.0)
+            if item is None:
+                self._ensure_worker_alive()
+                if self.metrics_logger is not None:
+                    self.metrics_logger(
+                        {
+                            "event": "checkpoint_flush_waiting",
+                            "pending_count": int(len(self._inflight)),
+                            "pending_steps": [int(s) for s in sorted(self._inflight.keys())[:16]],
+                            "wait_time_sec": float(time.perf_counter() - wait_start),
+                        }
+                    )
+                continue
             if self.metrics_logger is not None:
                 self.metrics_logger(
                     {
