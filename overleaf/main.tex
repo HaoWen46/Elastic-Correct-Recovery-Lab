@@ -1,0 +1,609 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+\usepackage[letterpaper,margin=0.75in]{geometry}
+\setlength{\columnsep}{0.28in}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{siunitx}
+\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[pagebackref=true,breaklinks=true,colorlinks,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[capitalize]{cleveref}
+\usepackage{float}
+\usepackage[export]{adjustbox}
+\usepackage{listings}
+
+\sisetup{
+  round-mode=places,
+  round-precision=4
+}
+
+\newcommand{\ecrl}{\textsc{ECRL}}
+% Math-friendly symbols for equations + code-form names for prose.
+% Use descriptive math macros (avoid single-letter \GB etc. which can be confusing).
+\newcommand{\GBmath}{B}
+\newcommand{\LBmath}{b}
+\newcommand{\stepsperepoch}{S}
+\newcommand{\epochSamples}{N}
+\newcommand{\gb}{\code{GLOBAL\_BATCH}}
+\newcommand{\lb}{\code{LOCAL\_BATCH}}
+\newcommand{\spe}{\code{steps\_per\_epoch}}
+\newcommand{\esamp}{\code{epoch\_samples}}
+
+% Inline code/identifiers (use \code{...} instead of \texttt{...}).
+\lstset{
+  basicstyle=\ttfamily\scriptsize,
+  columns=fullflexible,
+  keepspaces=true,
+  breaklines=true,
+  breakatwhitespace=true
+}
+\newcommand{\code}[1]{\lstinline!#1!}
+
+\setlist[itemize]{leftmargin=1.2em}
+\setlist[enumerate]{leftmargin=1.2em}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.35em}
+
+% Figures: adjustbox lets us hard-limit included graphics to the current column width.
+
+% Tone down section/subsection heading sizes (user preference).
+\titleformat{\section}{\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.2ex minus 0.2ex}{0.7ex plus 0.2ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.2ex minus 0.2ex}{0.5ex plus 0.2ex}
+
+\title{\ecrl: Elastic and Correct Recovery Lab (DDP)\\
+\large Comprehensive CVPR-Style Systems Report}
+\author{
+Author Placeholder\\
+\code{TODO@institution.edu}
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present \ecrl, a reproducible framework for evaluating failure recovery semantics and elastic resume behavior in PyTorch Distributed Data Parallel (DDP) training. The project is an evaluation and semantics effort, not a new checkpointing algorithm. \ecrl enforces strict invariants: fixed epoch geometry from a constant global batch, rank-0-only atomic checkpoint writes, barrier-synchronized checkpoint boundaries, and fail injection only at step boundaries. We evaluate blocking and overlapped checkpoint strategies plus elastic resume (\(N \rightarrow M\)) under controlled failures. Across the full publication run set, correctness invariants are satisfied exactly (\code{duplicates}=\code{missing}=\code{extra}=0). We report goodput under failures, restart counts, checkpoint stall decomposition, and trajectory divergence. All artifacts (logs, metrics, aggregates, plots) are reproducible and included.
+\end{abstract}
+
+\section{Introduction}
+Distributed training reliability requires two properties: semantic correctness after faults and acceptable performance overhead. Many systems reports emphasize one dimension and under-specify the other. \ecrl is built to make both explicit, measurable, and reproducible.
+
+The framework targets three questions:
+\begin{enumerate}
+  \item \textbf{Correctness under failure}: does restart preserve exact data-progress semantics?
+  \item \textbf{Goodput under failure}: what useful progress rate remains after fault-handling overhead?
+  \item \textbf{Elastic resume}: can checkpoints written at world size \(N\) be resumed at \(M\) while preserving constant-global-batch semantics?
+\end{enumerate}
+
+\section{Scope and Hard Constraints}
+\subsection{Scope}
+\ecrl evaluates DDP data parallel training only. It does not implement FSDP, OS-level CR, GPU-level CR, or a novel recovery runtime.
+
+\subsection{Non-Negotiable Constraints}
+The implementation enforces:
+\begin{itemize}
+  \item Python 3.11.2 in a virtual environment.
+  \item DDP data parallel only.
+  \item Constant \gb{} for all runs/resumes.
+  \item Runtime divisibility: \(\gb \bmod W = 0\), where \(W\) is world size.
+  \item \(\lb=\gb/W\), \code{num\_workers=0}, \code{drop\_last=True}.
+  \item Epochs defined by fixed step count, not dataloader exhaustion.
+  \item Rank-0-only atomic checkpoint writes.
+  \item Failure injection only at synchronized step boundaries.
+  \item Overlapped writer is a background process that performs filesystem I/O only.
+\end{itemize}
+
+\subsection{Epoch Geometry Contract}
+Given dataset size \(D\) and constant global batch \(B\) (\gb):
+\begin{equation}
+\stepsperepoch=\left\lfloor\frac{D}{\GBmath}\right\rfloor,\qquad
+\epochSamples=\stepsperepoch\cdot\GBmath.
+\end{equation}
+Each epoch executes exactly \(\stepsperepoch\) steps.
+
+\subsection{Correctness Invariant}
+For each epoch, recovered runs must match reference sample-ID multiset exactly:
+\begin{equation}
+\code{duplicates}=0,\quad \code{missing}=0,\quad \code{extra}=0.
+\end{equation}
+
+\section{System Design}
+\subsection{Data-Progress Instrumentation}
+Supported datasets emit \((x,y,\code{sample\_id})\): CIFAR10WithIDs, CIFAR100WithIDs, ImageFolderWithIDs, FakeDataWithIDs. This enables step-level semantic auditing.
+
+\subsection{Resumable Sampler}
+For epoch \(e\), generate a deterministic permutation from \((\code{seed}, e)\) and truncate it to \(\esamp\). At step \(s\):
+\begin{equation}
+\code{window}_s=\code{perm}_e\big[s\cdot\gb:(s+1)\cdot\gb\big].
+\end{equation}
+Rank \(r\) receives a contiguous shard:
+\begin{equation}
+\code{window}_s\big[r\cdot\lb:(r+1)\cdot\lb\big].
+\end{equation}
+Checkpointed sampler state: \(\{\code{epoch},\code{cursor\_step},\code{seed}\}\).
+
+\subsection{StatePack and Atomic Persistence}
+State capture includes model/optimizer/scheduler, sampler, step state, and RNG states (Python, NumPy, torch CPU/CUDA). Atomic write protocol:
+\begin{center}
+\code{tmp write -> fsync -> rename -> latest pointer update}
+\end{center}
+
+\subsection{Checkpoint Strategies}
+\begin{itemize}[leftmargin=1.0em,itemsep=0.15em,topsep=0.15em]
+  \item \textbf{Blocking} (every \(K\) steps): \code{barrier -> capture -> rank0 write -> barrier}
+  \item \textbf{Overlapped} (every \(K\) steps): \code{barrier -> capture -> enqueue -> barrier}
+\end{itemize}
+Persistence is handled by a spawned process with bounded in-flight queue.
+
+\subsection{Step-Boundary Failure Model}
+Failures are injected by rank 0 (\code{exit(137)}) only after:
+\begin{itemize}
+  \item step completion,
+  \item checkpoint-boundary handling,
+  \item synchronization barrier.
+\end{itemize}
+Supervisor restarts from \code{latest.json} until target steps are reached.
+
+\subsection{Formal Semantics of Recovery}
+We model a run as a sequence of committed training steps indexed by logical global step \(g\). A committed step is one for which all ranks have completed forward/backward/update, the sampler cursor has advanced exactly once, and any configured checkpoint boundary protocol for that step has completed. Crash-restart may replay physical computation, but semantic progress is defined only by committed logical steps.
+
+Let \(E_{e,s}\) denote the expected global window of sample IDs for epoch \(e\), cursor step \(s\), and fixed \gb. Let \(O_{e,s}\) denote the observed multiset recovered from merged logs across all ranks. The hard invariant is:
+\begin{equation}
+\forall e,s:\quad O_{e,s}=E_{e,s}.
+\end{equation}
+This definition separates \emph{semantic correctness} (exact window match) from \emph{performance} (how much replay and stall was needed to preserve that match).
+
+\subsection{Elastic Resume Semantics (\(N\rightarrow M\))}
+Elasticity changes world size but not global batch geometry. On resume, \(W\) may change from \(N\) to \(M\), but \(\gb\) is constant and \(\lb=\gb/W\) is recomputed under a divisibility assertion. Because the sampler emits a \gb-sized global window and then rank-shards contiguously by current \(W\), the union over ranks remains the same global multiset at each logical step:
+\begin{equation}
+\bigcup_{r=0}^{W-1}\code{window}_{e,s}^{(r)}=\code{window}_{e,s},\quad
+|\code{window}_{e,s}^{(r)}|=\lb.
+\end{equation}
+Hence correctness under \(N\rightarrow M\) reduces to preserving \(\{\code{epoch},\code{cursor\_step},\code{seed}\}\) and enforcing constant \gb.
+
+\subsection{Deterministic Step Timeline}
+Each training step follows a strict timeline to prevent ambiguous boundaries:
+\begin{enumerate}
+  \item materialize rank-local shard from deterministic global window,
+  \item execute model step and optimizer update,
+  \item synchronize for checkpoint boundary if periodic trigger fires,
+  \item capture (and write or enqueue on rank 0),
+  \item synchronize post-capture boundary,
+  \item optionally inject failure after a final barrier.
+\end{enumerate}
+This timeline ensures kill points occur only where sampler and step state are globally well-defined.
+
+\subsection{Supervisor State Machine}
+The supervisor is intentionally simple and deterministic:
+\begin{itemize}
+  \item \textbf{Launch}: start \code{torchrun} with fresh or resume arguments.
+  \item \textbf{Monitor}: await exit; classify clean completion vs failure.
+  \item \textbf{Recover}: on failure, parse \code{latest.json}, increment restart counter, relaunch.
+  \item \textbf{Terminate}: stop when target logical steps are complete or fatal configuration error occurs.
+\end{itemize}
+The supervisor never edits checkpoint payloads; it only selects the latest committed savepoint.
+
+\subsection{Logging Schema}
+\begin{table}[H]
+\small
+\centering
+\caption{Core logging fields and purpose.}
+\label{tab:log_schema}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\columnwidth}{>{\raggedright\arraybackslash}p{0.36\columnwidth} >{\raggedright\arraybackslash}X}
+\toprule
+Field & Purpose \\
+\midrule
+\code{global\_step} & Logical progress and replay detection \\
+\code{epoch}, \code{cursor\_step} & Deterministic window reconstruction \\
+\code{sample\_ids\_hash/count} & Scalable data-progress verification \\
+\code{world\_size}, \code{rank} & Distributed consistency checks \\
+\code{loss} & Trajectory and divergence analysis \\
+\code{checkpoint\_rank0.jsonl} & Snapshot / write / enqueue / backpressure / stall events \\
+\code{supervisor.json} & Attempts, restarts, terminal status \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Experimental Methodology}
+\subsection{Methodology Goals and Research Questions}
+The methodological objective is not to maximize raw throughput; it is to make recovery semantics auditable under failures and elasticity, then quantify the performance cost of maintaining those semantics. We frame the study with three research questions:
+\begin{itemize}
+  \item \textbf{RQ1 (semantic correctness)}: after crash-restart, does each logical epoch-step consume exactly the expected global sample multiset?
+  \item \textbf{RQ2 (runtime efficiency)}: how much useful progress rate is retained under failure and checkpoint overhead?
+  \item \textbf{RQ3 (elasticity)}: can checkpoint state written at one world size be resumed at another without violating data-progress invariants?
+\end{itemize}
+
+\subsection{Experimental Environment}
+Measured runtime environment:
+\begin{itemize}
+  \item Python 3.11.2, torch 2.10.0
+  \item CUDA unavailable, MPS available
+  \item CPU cores: 10
+  \item \code{uv}-managed \code{.venv}
+\end{itemize}
+All experiments use \code{num\_workers=0} and \code{drop\_last=True} by construction to remove dataloader worker nondeterminism and partial-batch tail effects from the semantic analysis.
+
+\subsection{Variables and Control Policy}
+We treat checkpoint strategy and failure schedule as independent variables while holding sampler semantics, epoch geometry, and global batch constant. Table~\ref{tab:controls} summarizes control decisions.
+\begin{table}[H]
+\scriptsize
+\centering
+\caption{Controlled and varied factors in the methodology.}
+\label{tab:controls}
+\begin{tabularx}{\columnwidth}{>{\raggedright\arraybackslash}p{0.24\columnwidth} >{\raggedright\arraybackslash}p{0.18\columnwidth} >{\raggedright\arraybackslash}X}
+\toprule
+Factor & Role & Methodological treatment \\
+\midrule
+\code{GLOBAL\_BATCH} & Controlled & Fixed per experiment family, constant across fresh/resume/elastic phases. \\
+\code{world\_size} & Varied & Explicitly changed only in elastic experiments, with runtime divisibility assertion. \\
+Checkpoint strategy & Varied & Blocking vs overlapped periodic savepoint protocols. \\
+Failure steps & Varied & Deterministic step-index schedule, rank-0-only boundary kill. \\
+Sampler seed & Controlled/Varied & Fixed within run, varied across aggregate seeds in Exp3. \\
+Model/dataset & Controlled per experiment & Kept fixed inside each experiment class to isolate recovery behavior. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Publication Run Set}
+\noindent Artifact root: \code{results/pub\_n2\_20260213}
+\FloatBarrier
+\begin{table}[H]
+\scriptsize
+\centering
+\caption{Run matrix used for publication reporting.}
+\label{tab:run_matrix}
+\begin{tabularx}{\columnwidth}{l p{0.33\columnwidth} c X}
+\toprule
+Exp & Variants & Fail steps & Goal \\
+\midrule
+Exp1 & Ref, Blocking, Overlapped & 200, 600 & Failure-recovery semantics + goodput \\
+Exp2 & Ref, Elastic (\(2\rightarrow1\)) & None & World-size change correctness \\
+Exp3 & Ref, Blocking, Overlapped (2 seeds) & 200, 500 & Larger workload aggregate behavior \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Execution Protocol}
+Each run follows a fixed procedure:
+\begin{enumerate}
+  \item Parse configuration and assert hard constraints (\(\gb \bmod W=0\), fixed epoch geometry, DDP-only mode).
+  \item Initialize DDP process group and deterministic sampler state.
+  \item Execute training loop with explicit \code{for step\_in\_epoch in range(steps\_per\_epoch)} control.
+  \item Apply periodic checkpoint protocol (blocking or overlapped) at configured cadence.
+  \item Inject failures at configured global steps (rank 0 only, boundary-safe).
+  \item Restart via supervisor until target logical step budget \(T\) is complete.
+  \item Run metrics pipeline (correctness, goodput, divergence) and aggregate outputs.
+\end{enumerate}
+The explicit step-indexed protocol is essential: logical epoch boundaries are invariant to runtime interruptions and do not depend on dataloader exhaustion behavior.
+
+\subsection{Correctness Checker Method}
+The checker reconstructs expected windows directly from ground-truth sampler semantics:
+\begin{enumerate}
+  \item For each epoch \(e\), regenerate permutation from \((\code{seed},e)\).
+  \item Truncate to \(\esamp=\spe\cdot\gb\).
+  \item For each logged \((e,s)\), reconstruct expected global window of size \gb.
+  \item Merge rank logs for that step; validate \code{sample\_ids\_count} sum and hash agreement.
+  \item On debug cadence, compare raw ID sets to diagnose any mismatch source.
+\end{enumerate}
+Aggregate outcomes per epoch are reported as \code{duplicates}, \code{missing}, and \code{extra}. A run passes only if all are zero for every epoch.
+
+\subsection{Goodput and Stall Decomposition}
+Primary performance metric:
+\begin{equation}
+\code{goodput}=\frac{\code{committed\_logical\_steps}}{\code{wall\_clock\_time}}.
+\end{equation}
+To interpret this rate, we decompose wall time into train compute, checkpoint overhead, and failure-recovery effects:
+\begin{equation}
+t_{\text{wall}} = t_{\text{compute}} + t_{\text{snapshot}} + t_{\text{write}} + t_{\text{sync}} + t_{\text{replay}} + t_{\text{restart}}.
+\end{equation}
+For blocking mode, \(\code{stall}\approx t_{\text{snapshot}}+t_{\text{write}}+t_{\text{sync}}\) at checkpoint steps. For overlapped mode, write can move off the critical path but queue backpressure and barrier timing can still dominate observed stall.
+
+\subsection{Divergence Method}
+We compare recovery trajectories against reference at matched logical steps. Reported quantities include:
+\begin{itemize}
+  \item loss absolute differences over time (max, mean, AUC),
+  \item parameter-space \(L2\) distance at designated checkpoints,
+  \item digest equality checks for strict identity where applicable.
+\end{itemize}
+Interpretation rule: non-zero divergence is acceptable if and only if correctness invariants remain satisfied; divergence is used as a sensitivity indicator, not a correctness criterion.
+
+\subsection{Statistical Treatment for Aggregate Runs}
+Exp3 aggregates two independent seeds per class. We report class means and 95\% confidence intervals for goodput and timing metrics, plus per-run tables for traceability. With small \(n\), interval estimates are descriptive and should be interpreted cautiously; they primarily communicate observed variability rather than asymptotic population claims.
+
+\subsection{Quality Gates and Reproducibility Protocol}
+A run is accepted into publication summary only if:
+\begin{enumerate}
+  \item training reaches target logical step budget \(T\),
+  \item correctness checker passes all epochs,
+  \item required metric files are produced without missing fields,
+  \item supervisor logs and checkpoint metadata are internally consistent.
+\end{enumerate}
+Reproducibility is supported by deterministic seeds, explicit failure schedules, fixed geometry contracts, and artifact-local metric outputs under a stable directory structure.
+
+\subsection{Threat Model for Methodology}
+The study assumes fail-stop process crashes and does not model Byzantine behavior, partial filesystem corruption, or network partitions. The goal is to isolate and evaluate restart semantics for practical DDP training failures under controlled conditions.
+
+\subsection{Methodology-to-Implementation Traceability}
+To make claims auditable, each methodological invariant is tied to a concrete implementation component (Table~\ref{tab:traceability}). This mapping is useful for reviewers: if an invariant appears violated, one can immediately inspect the corresponding module.
+\begin{table}[H]
+\scriptsize
+\centering
+\caption{Traceability map from methodology claims to implementation modules.}
+\label{tab:traceability}
+\begin{tabularx}{\columnwidth}{>{\raggedright\arraybackslash}p{0.30\columnwidth} >{\raggedright\arraybackslash}p{0.26\columnwidth} >{\raggedright\arraybackslash}X}
+\toprule
+Claimed property & Primary module & Audit target \\
+\midrule
+Sample-ID observability & \code{data/*\_with\_ids.py} & Confirm tuple output contains immutable dataset index. \\
+Deterministic global windows & \code{sampler/resumable\_sampler.py} & Verify \((\code{seed},\code{epoch})\)-driven permutation and cursor semantics. \\
+Capture/restore completeness & \code{statepack/statepack.py} & Confirm model/optimizer/scheduler/sampler/step/RNG round-trip. \\
+Atomic rank-0 persistence & \code{ckpt/atomic\_writer.py} & Validate temp-write, fsync, rename, pointer update ordering. \\
+Blocking checkpoint semantics & \code{ckpt/blocking.py} & Verify pre/post barriers around capture+write. \\
+Overlapped I/O isolation & \code{ckpt/overlapped.py} & Ensure background process does only filesystem work (no collectives). \\
+Boundary-safe failure injection & \code{train/ddp\_train.py} & Confirm rank-0 kill only after step and checkpoint barriers. \\
+Crash-loop recovery & \code{orchestration/supervisor.py} & Check deterministic restart from \code{latest.json}. \\
+Semantic verification & \code{metrics/correctness.py} & Recompute expected windows and compare merged logs. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Checker and Recovery Pseudocode}
+For methodological clarity, Listings~\ref{lst:checker} and~\ref{lst:supervisor} summarize the two central control flows used in publication evaluation.
+\begin{lstlisting}[language=Python,caption={Correctness checker outline.},label={lst:checker}]
+for epoch in observed_epochs:
+    perm = deterministic_perm(seed, epoch)
+    perm_epoch = perm[:steps_per_epoch * GLOBAL_BATCH]
+    for cursor_step in logged_steps(epoch):
+        expected = perm_epoch[
+            cursor_step * GLOBAL_BATCH : (cursor_step + 1) * GLOBAL_BATCH
+        ]
+        observed = merge_rank_ids(epoch, cursor_step)
+        assert multiset(observed) == multiset(expected)
+report(duplicates=0, missing=0, extra=0)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python,caption={Supervisor restart loop outline.},label={lst:supervisor}]
+while not reached_target_steps:
+    exit_code = launch_torchrun(resume=have_latest_pointer())
+    if exit_code == 0:
+        break
+    latest = read_latest_pointer()
+    assert latest is not None
+    restart_count += 1
+\end{lstlisting}
+
+\subsection{Data Reduction and Reporting Rules}
+Raw logs are converted into per-run metrics first, then cross-run aggregates. We apply the following deterministic reporting policy:
+\begin{enumerate}
+  \item Per-run JSON metrics are the source of truth; markdown summaries are derived views.
+  \item Publication tables are generated from frozen JSON artifacts under the run root.
+  \item If a run fails correctness, its performance metrics are retained for diagnosis but excluded from headline claims.
+  \item Aggregates (means, confidence intervals) are computed only over runs that pass correctness.
+\end{enumerate}
+This policy prevents accidental mixing of semantically invalid runs with final performance numbers.
+
+\section{Results}
+\subsection{Exp1: Failure Recovery (\(W=2,T=1000\))}
+\begin{table}[H]
+\scriptsize
+\centering
+\caption{Exp1 summary (all runs pass correctness).}
+\label{tab:exp1}
+\begin{tabular}{lccccc}
+\toprule
+Run & Goodput & Drop & Restarts & Wall (s) & Stall (s) \\
+\midrule
+Reference & 8.4707 & 0.00\% & 0 & 118.055 & 0.1186 \\
+Blocking & 7.7947 & 7.98\% & 2 & 128.292 & 0.1160 \\
+Overlapped & 7.6332 & 9.89\% & 2 & 131.007 & 0.0888 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Exp1 divergence versus reference is exactly zero (loss AUC 0.0; \(L2=0\) at evaluated checkpoints).
+
+\subsection{Exp2: Elastic Resume (\(2\rightarrow1\), final \(T=800\))}
+\begin{table}[H]
+\scriptsize
+\centering
+\caption{Exp2 summary (both runs pass correctness).}
+\label{tab:exp2}
+\begin{tabular}{lccccc}
+\toprule
+Run & Goodput & Drop & Restarts & Wall (s) & Stall (s) \\
+\midrule
+Reference & 8.5400 & 0.00\% & 0 & 93.677 & 0.0978 \\
+Elastic & 7.6322 & 10.63\% & 0 & 104.820 & 0.0974 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Elastic divergence vs reference: loss AUC 26.0168, max abs loss diff 0.2997, mean abs diff 0.0325, \(L2@800=12.2542\).
+
+\subsection{Exp3: CIFAR100 + ResNet18, 2-Seed Aggregate}
+\begin{table}[H]
+\scriptsize
+\centering
+\caption{Exp3 aggregate performance (mean \(\pm\) 95\% CI).}
+\label{tab:exp3_agg}
+\begin{tabular}{lcccc}
+\toprule
+Class & Pass rate & Goodput & Restarts & Drop \\
+\midrule
+Reference & 1.00 & \(1.0334 \pm 0.0233\) & 0.0 & 0.00\% \\
+Blocking & 1.00 & \(0.9685 \pm 0.0239\) & 2.0 & 6.28\% \\
+Overlapped & 1.00 & \(0.9521 \pm 0.0627\) & 2.0 & 7.86\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\scriptsize
+\centering
+\caption{Exp3 timing means (seconds, total per run).}
+\label{tab:exp3_timing}
+\begin{tabular}{lcccc}
+\toprule
+Class & Snapshot & Write & Stall & Wall \\
+\midrule
+Reference & 0.0056 & 0.7418 & 0.7529 & 580.6770 \\
+Blocking & 0.0069 & 0.8204 & 0.8337 & 619.6187 \\
+Overlapped & 0.0060 & 0.0756 & 0.8596 & 630.8713 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table*}[H]
+\scriptsize
+\centering
+\caption{Exp3 per-run details (all runs pass correctness).}
+\label{tab:exp3_seed}
+\begin{tabular}{lcccccc}
+\toprule
+Run ID & Goodput & Restarts & Wall (s) & Snapshot (s) & Write (s) & Stall (s) \\
+\midrule
+\texttt{s1337-ref} & 1.0453 & 0 & 573.984 & 0.0050 & 0.6950 & 0.7053 \\
+\texttt{s1337-blocking} & 0.9563 & 2 & 627.436 & 0.0058 & 0.7766 & 0.7885 \\
+\texttt{s1337-overlapped} & 0.9202 & 2 & 652.056 & 0.0063 & 0.0783 & 0.8830 \\
+\texttt{s2027-ref} & 1.0215 & 0 & 587.370 & 0.0061 & 0.7885 & 0.8004 \\
+\texttt{s2027-blocking} & 0.9807 & 2 & 611.802 & 0.0080 & 0.8643 & 0.8789 \\
+\texttt{s2027-overlapped} & 0.9841 & 2 & 609.686 & 0.0057 & 0.0729 & 0.8362 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table}[H]
+\scriptsize
+\centering
+\caption{Exp3 divergence summary across 4 failure-reference pairs.}
+\label{tab:exp3_div_summary}
+\begin{tabular}{lc}
+\toprule
+Statistic & Mean \\
+\midrule
+Loss AUC abs diff & 32.2130 \\
+Max abs loss diff & 0.3015 \\
+\(L2@600\) & 23.4734 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table*}[H]
+\scriptsize
+\centering
+\caption{Exp3 divergence per pair (selected checkpoints).}
+\label{tab:exp3_div_pairs}
+\begin{tabular}{lccc}
+\toprule
+Pair & Loss AUC & \(L2@400\) & \(L2@600\) \\
+\midrule
+\texttt{s1337 blocking vs ref} & 32.2331 & 23.3226 & 23.5436 \\
+\texttt{s1337 overlapped vs ref} & 32.2331 & 23.3226 & 23.5436 \\
+\texttt{s2027 blocking vs ref} & 32.1929 & 24.1773 & 23.4032 \\
+\texttt{s2027 overlapped vs ref} & 32.1929 & 24.1773 & 23.4032 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Plots}
+\begin{figure}[H]
+\centering
+\subfloat[Loss (Exp1)]{\includegraphics[max width=0.49\columnwidth]{figures/loss_curves_exp1.png}}\hfill
+\subfloat[Loss (Exp2)]{\includegraphics[max width=0.49\columnwidth]{figures/loss_curves_exp2.png}}\\
+\hfill\subfloat[Loss (Exp3)]{\includegraphics[max width=0.49\columnwidth]{figures/loss_curves_exp3_publishable.png}}\hfill
+\caption{Loss trajectories across experiments.}
+\label{fig:loss_all}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\subfloat[Goodput (Exp1)]{\includegraphics[max width=0.49\columnwidth]{figures/goodput_exp1.png}}\hfill
+\subfloat[Goodput (Exp2)]{\includegraphics[max width=0.49\columnwidth]{figures/goodput_exp2.png}}\\
+\hfill\subfloat[Goodput (Exp3)]{\includegraphics[max width=0.49\columnwidth]{figures/goodput_exp3_publishable.png}}\hfill
+\caption{Goodput comparisons across experiments.}
+\label{fig:goodput_all}
+\end{figure}
+
+\section{Discussion}
+\subsection{Correctness Findings}
+All required runs satisfy the hard correctness invariant exactly, including failure-injected and elastic-resume settings. This is the central systems result: regardless of restart count or world-size transition in the tested regime, the reconstructed sample multiset at each logical epoch-step matches the reference semantics exactly (\code{duplicates=missing=extra=0}).
+
+Two methodological details are decisive here. First, epoch geometry is fixed from dataset cardinality and constant \gb; steps are counted explicitly rather than inferred from loader exhaustion. Second, checkpoint and failure events are constrained to synchronized boundaries, so no run can commit an ambiguous half-step with partially advanced sampler state.
+
+\subsection{Performance Findings}
+Failure-aware runs show expected goodput drops relative to failure-free references. In Exp1, blocking and overlapped both incur replay and restart overhead from two injected failures, with observed drops of 7.98\% and 9.89\% respectively. In Exp2, elastic resume incurs a 10.63\% drop versus fixed-size reference, reflecting altered parallelism and synchronization behavior after the \(2\rightarrow1\) transition.
+
+Exp3 clarifies a subtle point: overlapped persistence dramatically decreases write time on rank 0, but total stall is not proportionally reduced. This indicates that in the measured environment, barrier synchronization and queue/backpressure timing can dominate residual overhead even when raw filesystem write cost is lower. In other words, asynchronous I/O alone is not sufficient; the end-to-end critical path still includes synchronization structure.
+
+\subsection{Divergence Interpretation}
+Exp1 has zero divergence despite failures, demonstrating that restart mechanics can preserve both semantic data-progress and trajectory identity in this regime. Exp2 and Exp3, however, show non-zero divergence while still satisfying correctness invariants. This is expected: preserving \emph{which samples are consumed} does not always force identity in \emph{floating-point trajectory}, especially after world-size changes or timing perturbations.
+
+Methodologically, this reinforces the need to report both classes of metrics. Correctness answers whether restart semantics are valid; divergence quantifies sensitivity of the optimization path under those valid semantics.
+
+\subsection{Practical Guidance from the Results}
+The combined evidence suggests a concrete deployment heuristic:
+\begin{itemize}
+  \item If semantic integrity is non-negotiable, enforce strict boundary synchronization and deterministic sampler state persistence as implemented here.
+  \item If minimizing stall is the priority, evaluate overlap effectiveness on target hardware; improvements in write time do not automatically translate to goodput gains.
+  \item For elastic operations, hold global batch fixed and treat non-zero divergence as an expected phenomenon to monitor, not an automatic correctness failure.
+\end{itemize}
+
+\section{Limitations and Threats to Validity}
+\begin{itemize}[leftmargin=1.2em]
+  \item Results are environment-specific; absolute throughput values are not universal.
+  \item Exp3 aggregate uses two seeds; larger seed counts would tighten uncertainty bounds.
+  \item Elastic run IDs retain legacy naming (\texttt{n4}, \texttt{4to2}) while executed publication shape here is \(2\rightarrow1\).
+  \item This work evaluates systems semantics and runtime overhead, not final model quality.
+  \item The fault model is fail-stop process termination; corruption-heavy or adversarial failures are out of scope.
+  \item The experiments are intentionally controlled (fixed dataloader workers, fixed geometry); broader production variability is not exhaustively covered.
+\end{itemize}
+
+\section{Reproducibility and Artifact Map}
+Primary artifact root:
+\texttt{results/pub\_n2\_20260213}
+
+Key files:
+\begin{itemize}[leftmargin=1.2em]
+  \item \texttt{publication\_summary.json}, \texttt{publication\_summary.md}
+  \item \texttt{metrics/<run\_id>/correctness.json}
+  \item \texttt{metrics/<run\_id>/goodput.json}
+  \item \texttt{metrics/<run\_id>/divergence\_vs\_*.json}
+  \item \texttt{metrics/\_aggregate/exp3\_*.json}
+  \item \texttt{plots/*.png}
+\end{itemize}
+
+\section{Conclusion}
+\ecrl provides a complete DDP recovery evaluation framework with strict semantics and quantitative overhead reporting. In this publication run set, correctness is exact under failures and elastic resume, while goodput/stall analyses expose practical tradeoffs between checkpoint strategies.
+
+\appendix
+\section{Run Manifest}
+\begin{itemize}[leftmargin=1.2em]
+  \item Python 3.11.2, torch 2.10.0, \texttt{uv}-managed \texttt{.venv}
+  \item Exp1: \(W=2\), \(T=1000\), fail \(\{200,600\}\)
+  \item Exp2: \(2\rightarrow1\), phase A 400, final 800
+  \item Exp3: CIFAR100 + ResNet18, seeds \(\{1337,2027\}\), \(T=600\), fail \(\{200,500\}\)
+\end{itemize}
+
+\section{Data and Model Sources}
+\begin{itemize}[leftmargin=1.2em]
+  \item CIFAR datasets~\cite{cifar10,cifar100}
+  \item ResNet family~\cite{resnet}
+  \item PyTorch DDP API~\cite{pytorch_ddp}
+\end{itemize}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
