@@ -1,0 +1,3600 @@
+nohup: ignoring input
+[INFO] Matrix prefix: exp4_matrix_20260215_151709
+[INFO] Results root: results
+[INFO] NPROC: 4
+[INFO] PROFILE: small
+[INFO] MODELS: resnet18,resnet50
+[INFO] DATASETS: cifar10,cifar100
+[INFO] FAILURE_SPECS: base:400,1200;late:800,1400
+[INFO] CHECKPOINT_EVERY_CSV: 50
+[INFO] MAX_INFLIGHT_CSV: 4
+[INFO] SKIP_IF_EXISTS: 1
+[INFO] DRY_RUN: 0
+[INFO] Planned suites: 8
+[MATRIX 1/8] run_prefix=exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4 dataset=cifar10 model=resnet18 fail=400,1200 k=50 inflight=4 port_base=40046
+[INFO] Run prefix: exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4
+[INFO] Results dir: results/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4
+Audited 7 packages in 11ms
+[INFO] Runtime patch check: ok
+[INFO] Profile: small
+[INFO] Dataset: cifar10 (size=50000)
+[INFO] Model: resnet18
+[INFO] Seeds: 1337
+[INFO] NPROC: 4
+[RUN] exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_reference seed=1337 nproc=4 target=1600 strategy=blocking fail=none
+W0215 15:18:39.983000 4017282 .venv/lib/python3.11/site-packages/torch/distributed/elastic/agent/server/api.py:739] Received 1 death signal, shutting down workers
+W0215 15:18:39.983000 4017282 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4017299 closing signal SIGHUP
+W0215 15:18:39.983000 4017282 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4017300 closing signal SIGHUP
+W0215 15:18:39.984000 4017282 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4017301 closing signal SIGHUP
+W0215 15:18:39.984000 4017282 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4017302 closing signal SIGHUP
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 308, in launch_agent
+    result = agent.run()
+             ^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/metrics/api.py", line 134, in wrapper
+    result = f(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/agent/server/api.py", line 731, in run
+    result = self._invoke_run(role)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/agent/server/api.py", line 908, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 86, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 4017282 got signal: 1
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_reference/step_00000950.pt global_step=950 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[RUN] exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_blocking seed=1337 nproc=4 target=1600 strategy=blocking fail=400,1200
+[ECRL][fail-inject] step=400 strategy=blocking starting pre-exit flush/barrier
+[ECRL][fail-inject] step=400 entering synchronized exit barrier
+[ECRL][fail-inject] step=400 all ranks exiting with 137 after synchronized flush
+W0215 15:20:23.767000 4017715 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4017725 closing signal SIGTERM
+W0215 15:20:23.768000 4017715 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4017726 closing signal SIGTERM
+E0215 15:20:23.833000 4017715 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 2 (pid: 4017727) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:20:23
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4017728)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:20:23
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4017725)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:20:23
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4017726)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:20:23
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4017727)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_blocking/step_00000400.pt global_step=400 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[ECRL][fail-inject] step=1200 strategy=blocking starting pre-exit flush/barrier
+[ECRL][fail-inject] step=1200 entering synchronized exit barrier
+[ECRL][fail-inject] step=1200 all ranks exiting with 137 after synchronized flush
+W0215 15:21:35.170000 4017960 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4017970 closing signal SIGTERM
+W0215 15:21:35.171000 4017960 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4017971 closing signal SIGTERM
+W0215 15:21:35.171000 4017960 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4017972 closing signal SIGTERM
+E0215 15:21:35.268000 4017960 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 3 (pid: 4017973) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:21:35
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4017970)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:21:35
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4017971)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:21:35
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4017972)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:21:35
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4017973)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_blocking/step_00001200.pt global_step=1200 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[RUN] exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_overlapped seed=1337 nproc=4 target=1600 strategy=overlapped fail=400,1200
+[ECRL][fail-inject] step=400 strategy=overlapped starting pre-exit flush/barrier
+[ECRL][fail-inject] step=400 flush_done_sec=0.579
+[ECRL][fail-inject] step=400 close_done_sec=0.836
+[ECRL][fail-inject] step=400 entering synchronized exit barrier
+[ECRL][fail-inject] step=400 all ranks exiting with 137 after synchronized flush
+/tmp2/b11902156/miniconda3/envs/ecrl/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+W0215 15:22:56.454000 4018275 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4018288 closing signal SIGTERM
+W0215 15:22:56.455000 4018275 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4018290 closing signal SIGTERM
+E0215 15:22:56.570000 4018275 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 0 (pid: 4018287) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:22:56
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4018289)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:22:56
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4018288)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:22:56
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4018290)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:22:56
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4018287)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_overlapped/step_00000400.pt global_step=400 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[ECRL][fail-inject] step=1200 strategy=overlapped starting pre-exit flush/barrier
+[ECRL][fail-inject] step=1200 flush_done_sec=0.536
+[ECRL][fail-inject] step=1200 close_done_sec=0.736
+[ECRL][fail-inject] step=1200 entering synchronized exit barrier
+[ECRL][fail-inject] step=1200 all ranks exiting with 137 after synchronized flush
+/tmp2/b11902156/miniconda3/envs/ecrl/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+W0215 15:24:05.513000 4018435 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4018448 closing signal SIGTERM
+E0215 15:24:05.578000 4018435 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 0 (pid: 4018445) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:24:05
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4018446)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:24:05
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4018447)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:24:05
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4018448)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:24:05
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4018445)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_overlapped/step_00001200.pt global_step=1200 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+{
+  "epochs": {
+    "0": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "1": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "2": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "3": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "4": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "5": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "6": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "7": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "8": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 40
+    }
+  },
+  "failures": [],
+  "global_batch": 256,
+  "num_failures": 0,
+  "passed": true,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_reference",
+  "steps_per_epoch": 195
+}
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 0.0,
+    "enqueue_latency_sec_total": 0.0,
+    "num_events": 32,
+    "snapshot_time_sec_total": 0.019877867307513952,
+    "stall_time_sec_total": 11.10018748510629,
+    "write_time_sec_total": 10.939916244591586
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 11.728879879215135,
+  "replayed_steps": 45,
+  "restarts": 1,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_reference",
+  "supervisor": {
+    "attempts": 2,
+    "duration_sec": 146.69106721878052,
+    "restarts": 1,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771139982.506691
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 136.41541361808777
+}
+{
+  "epochs": {
+    "0": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "1": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "2": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "3": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "4": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "5": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "6": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "7": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "8": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 40
+    }
+  },
+  "failures": [],
+  "global_batch": 256,
+  "num_failures": 0,
+  "passed": true,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_blocking",
+  "steps_per_epoch": 195
+}
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 0.0,
+    "enqueue_latency_sec_total": 0.0,
+    "num_events": 32,
+    "snapshot_time_sec_total": 0.021699890960007906,
+    "stall_time_sec_total": 11.069861767347902,
+    "write_time_sec_total": 10.919160468154587
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 11.30228115186419,
+  "replayed_steps": 0,
+  "restarts": 2,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_blocking",
+  "supervisor": {
+    "attempts": 3,
+    "duration_sec": 151.7277021408081,
+    "restarts": 2,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771140136.0408297
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 141.5643424987793
+}
+{
+  "epochs": {
+    "0": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "1": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "2": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "3": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "4": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "5": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "6": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "7": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "8": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 40
+    }
+  },
+  "failures": [],
+  "global_batch": 256,
+  "num_failures": 0,
+  "passed": true,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_overlapped",
+  "steps_per_epoch": 195
+}
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 2.3807864636182785e-05,
+    "enqueue_latency_sec_total": 4.686539645656012,
+    "num_events": 35,
+    "snapshot_time_sec_total": 0.024624967365525663,
+    "stall_time_sec_total": 6.127344891778193,
+    "write_time_sec_total": 0.8727009900612757
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 11.572050892358263,
+  "replayed_steps": 0,
+  "restarts": 2,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_overlapped",
+  "supervisor": {
+    "attempts": 3,
+    "duration_sec": 149.80663108825684,
+    "restarts": 2,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771140287.6058545
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 138.26416897773743
+}
+{
+  "candidate_run": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_blocking",
+  "loss_divergence": {
+    "auc_abs_diff": 176.732283949852,
+    "max_abs_diff": 3.795494556427002,
+    "mean_abs_diff": 0.11050603196024894,
+    "num_common_steps": 1600
+  },
+  "reference_run": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_reference",
+  "steps": {
+    "1200": {
+      "available": true,
+      "candidate_digest": "633e636f833149a5a6cb9841c11e5cd17ed6afd09600ed78b6f24ffe6f6af4d6",
+      "l2_distance": 266.6874049611313,
+      "reference_digest": "11de1ca23b4891f89b6655e34ee37a6ce3ac28b5501f129253c29464d3a3c61f"
+    },
+    "1600": {
+      "available": true,
+      "candidate_digest": "846388fd5778051285ac89b8280a0c28496a54883d50f4637db4ac67f7e055c4",
+      "l2_distance": 240.54737739683202,
+      "reference_digest": "cee25e3cd72ea527119b58ecd5ea7da719f7cfbb55bda1351975a12e4649dfeb"
+    },
+    "200": {
+      "available": true,
+      "candidate_digest": "a3f626387dde05ab3827f0888b27625c469ae7b07f1a89bb4acba5a6712aeb00",
+      "l2_distance": 1762.0286059322075,
+      "reference_digest": "fa5a908195bf590f14bead2e4c510b49b942aed046d401f099ef6b2296772700"
+    },
+    "400": {
+      "available": true,
+      "candidate_digest": "91658009881964364e86d544e71ce7e2027df4b19c4f15f2de29e9576cf641bb",
+      "l2_distance": 901.2273063455748,
+      "reference_digest": "67d3e1719fc7eb080f5fb2784a09b38c71ac41577290d706cd5d5c95c6bad1d6"
+    },
+    "800": {
+      "available": true,
+      "candidate_digest": "0f37b90dd55864029bb419277e4eec1a1e84969591e1fb4d56eb79df7c61a7d8",
+      "l2_distance": 387.100770688695,
+      "reference_digest": "3c472c256f4b7d3b429010d09170978a0d8116ae3c17e650accde8f4f25bd76b"
+    }
+  }
+}
+{
+  "candidate_run": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_overlapped",
+  "loss_divergence": {
+    "auc_abs_diff": 178.38545942306519,
+    "max_abs_diff": 3.163148880004883,
+    "mean_abs_diff": 0.11150826960802078,
+    "num_common_steps": 1600
+  },
+  "reference_run": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_reference",
+  "steps": {
+    "1200": {
+      "available": true,
+      "candidate_digest": "4ea0d6bcbdafff902aacad64779bd6ddba2a6f5a8101227fa3d4b8897f81a36b",
+      "l2_distance": 699.9416504188996,
+      "reference_digest": "11de1ca23b4891f89b6655e34ee37a6ce3ac28b5501f129253c29464d3a3c61f"
+    },
+    "1600": {
+      "available": true,
+      "candidate_digest": "931039263895d645dc94324da88dd182c27dc87ad3222158c020f634c7bb3614",
+      "l2_distance": 689.2621466424345,
+      "reference_digest": "cee25e3cd72ea527119b58ecd5ea7da719f7cfbb55bda1351975a12e4649dfeb"
+    },
+    "200": {
+      "available": true,
+      "candidate_digest": "bdf9f64e9801efcaf6bcd0c8e9d5d056b87e3a0a1a7ea7cb7c86787aed17797f",
+      "l2_distance": 2769.167203490575,
+      "reference_digest": "fa5a908195bf590f14bead2e4c510b49b942aed046d401f099ef6b2296772700"
+    },
+    "400": {
+      "available": true,
+      "candidate_digest": "1a6c4cefcca25f0572c9ce7f4f6d86296d6a0251ac10ceeebd2a694eb80b19ba",
+      "l2_distance": 1729.389898085844,
+      "reference_digest": "67d3e1719fc7eb080f5fb2784a09b38c71ac41577290d706cd5d5c95c6bad1d6"
+    },
+    "800": {
+      "available": true,
+      "candidate_digest": "5c70c6e2d3d571152b21121354e9d6ce958ff0f14140956685d48e3cb1dbd998",
+      "l2_distance": 891.3052760471953,
+      "reference_digest": "3c472c256f4b7d3b429010d09170978a0d8116ae3c17e650accde8f4f25bd76b"
+    }
+  }
+}
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 11.728879879215135,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_reference",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 45.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 1.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_reference"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 11.728879879215135,
+      "replayed_steps": 45,
+      "restarts": 1,
+      "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_reference",
+      "snapshot_time_sec_total": 0.019877867307513952,
+      "stall_time_sec_total": 11.10018748510629,
+      "wall_clock_time_sec": 136.41541361808777,
+      "write_time_sec_total": 10.939916244591586
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.019877867307513952,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 11.10018748510629,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 136.41541361808777,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 10.939916244591586,
+    "n": 1,
+    "std": 0.0
+  }
+}
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 11.30228115186419,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_failure_blocking",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 2.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_blocking"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 11.30228115186419,
+      "replayed_steps": 0,
+      "restarts": 2,
+      "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_blocking",
+      "snapshot_time_sec_total": 0.021699890960007906,
+      "stall_time_sec_total": 11.069861767347902,
+      "wall_clock_time_sec": 141.5643424987793,
+      "write_time_sec_total": 10.919160468154587
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.021699890960007906,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 11.069861767347902,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 141.5643424987793,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 10.919160468154587,
+    "n": 1,
+    "std": 0.0
+  }
+}
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 11.572050892358263,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_failure_overlapped",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 2.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_overlapped"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 11.572050892358263,
+      "replayed_steps": 0,
+      "restarts": 2,
+      "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_failure_overlapped",
+      "snapshot_time_sec_total": 0.024624967365525663,
+      "stall_time_sec_total": 6.127344891778193,
+      "wall_clock_time_sec": 138.26416897773743,
+      "write_time_sec_total": 0.8727009900612757
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.024624967365525663,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 6.127344891778193,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 138.26416897773743,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.8727009900612757,
+    "n": 1,
+    "std": 0.0
+  }
+}
+{
+  "markdown": "results/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_publishable.md",
+  "json": "results/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_publishable.json"
+}
+[DONE] Publishable markdown: results/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_publishable.md
+[DONE] Publishable json: results/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_publishable.json
+[MATRIX 2/8] run_prefix=exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4 dataset=cifar10 model=resnet18 fail=800,1400 k=50 inflight=4 port_base=40096
+[INFO] Run prefix: exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4
+[INFO] Results dir: results/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4
+[INFO] Runtime patch check: ok
+[INFO] Profile: small
+[INFO] Dataset: cifar10 (size=50000)
+[INFO] Model: resnet18
+[INFO] Seeds: 1337
+[INFO] NPROC: 4
+[RUN] exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_reference seed=1337 nproc=4 target=1600 strategy=blocking fail=none
+[RUN] exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_blocking seed=1337 nproc=4 target=1600 strategy=blocking fail=800,1400
+[ECRL][fail-inject] step=800 strategy=blocking starting pre-exit flush/barrier
+[ECRL][fail-inject] step=800 entering synchronized exit barrier
+[ECRL][fail-inject] step=800 all ranks exiting with 137 after synchronized flush
+W0215 15:29:14.765000 4019379 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4019390 closing signal SIGTERM
+W0215 15:29:14.766000 4019379 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4019391 closing signal SIGTERM
+E0215 15:29:14.838000 4019379 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 0 (pid: 4019389) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:29:14
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4019392)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:29:14
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4019390)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:29:14
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4019391)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:29:14
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4019389)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_blocking/step_00000800.pt global_step=800 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[ECRL][fail-inject] step=1400 strategy=blocking starting pre-exit flush/barrier
+[ECRL][fail-inject] step=1400 entering synchronized exit barrier
+[ECRL][fail-inject] step=1400 all ranks exiting with 137 after synchronized flush
+W0215 15:30:10.608000 4019526 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4019537 closing signal SIGTERM
+W0215 15:30:10.609000 4019526 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4019538 closing signal SIGTERM
+W0215 15:30:10.610000 4019526 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4019540 closing signal SIGTERM
+E0215 15:30:10.739000 4019526 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 2 (pid: 4019539) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:30:10
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4019537)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:30:10
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4019538)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:30:10
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4019540)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:30:10
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4019539)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_blocking/step_00001400.pt global_step=1400 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[RUN] exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_overlapped seed=1337 nproc=4 target=1600 strategy=overlapped fail=800,1400
+[ECRL][fail-inject] step=800 strategy=overlapped starting pre-exit flush/barrier
+[ECRL][fail-inject] step=800 flush_done_sec=0.571
+[ECRL][fail-inject] step=800 close_done_sec=0.626
+[ECRL][fail-inject] step=800 entering synchronized exit barrier
+[ECRL][fail-inject] step=800 all ranks exiting with 137 after synchronized flush
+/tmp2/b11902156/miniconda3/envs/ecrl/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+W0215 15:31:51.039000 4020206 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4020225 closing signal SIGTERM
+W0215 15:31:51.039000 4020206 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4020226 closing signal SIGTERM
+W0215 15:31:51.040000 4020206 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4020227 closing signal SIGTERM
+E0215 15:31:51.205000 4020206 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 3 (pid: 4020228) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:31:51
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4020225)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:31:51
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4020226)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:31:51
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4020227)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:31:51
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4020228)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_overlapped/step_00000800.pt global_step=800 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[ECRL][fail-inject] step=1400 strategy=overlapped starting pre-exit flush/barrier
+[ECRL][fail-inject] step=1400 flush_done_sec=0.528
+[ECRL][fail-inject] step=1400 close_done_sec=0.591
+[ECRL][fail-inject] step=1400 entering synchronized exit barrier
+[ECRL][fail-inject] step=1400 all ranks exiting with 137 after synchronized flush
+/tmp2/b11902156/miniconda3/envs/ecrl/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+W0215 15:32:46.801000 4020416 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4020426 closing signal SIGTERM
+W0215 15:32:46.802000 4020416 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4020428 closing signal SIGTERM
+W0215 15:32:46.802000 4020416 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4020429 closing signal SIGTERM
+E0215 15:32:46.933000 4020416 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 1 (pid: 4020427) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:32:46
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4020426)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:32:46
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4020428)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:32:46
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4020429)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:32:46
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4020427)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_overlapped/step_00001400.pt global_step=1400 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+{
+  "epochs": {
+    "0": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "1": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "2": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "3": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "4": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "5": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "6": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "7": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "8": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 40
+    }
+  },
+  "failures": [],
+  "global_batch": 256,
+  "num_failures": 0,
+  "passed": true,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_reference",
+  "steps_per_epoch": 195
+}
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 0.0,
+    "enqueue_latency_sec_total": 0.0,
+    "num_events": 32,
+    "snapshot_time_sec_total": 0.02204492490272969,
+    "stall_time_sec_total": 12.831689249607734,
+    "write_time_sec_total": 12.686648808186874
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 13.322988357049656,
+  "replayed_steps": 0,
+  "restarts": 0,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_reference",
+  "supervisor": {
+    "attempts": 1,
+    "duration_sec": 130.45985507965088,
+    "restarts": 0,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771140484.559757
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 120.09317708015442
+}
+{
+  "epochs": {
+    "0": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "1": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "2": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "3": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "4": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "5": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "6": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "7": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "8": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 40
+    }
+  },
+  "failures": [],
+  "global_batch": 256,
+  "num_failures": 0,
+  "passed": true,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_blocking",
+  "steps_per_epoch": 195
+}
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 0.0,
+    "enqueue_latency_sec_total": 0.0,
+    "num_events": 32,
+    "snapshot_time_sec_total": 0.020750589901581407,
+    "stall_time_sec_total": 10.822092527057976,
+    "write_time_sec_total": 10.68486475024838
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 11.214306985472135,
+  "replayed_steps": 0,
+  "restarts": 2,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_blocking",
+  "supervisor": {
+    "attempts": 3,
+    "duration_sec": 152.98595023155212,
+    "restarts": 2,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771140639.3123462
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 142.67488861083984
+}
+{
+  "epochs": {
+    "0": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "1": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "2": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "3": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "4": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "5": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "6": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "7": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "8": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 40
+    }
+  },
+  "failures": [],
+  "global_batch": 256,
+  "num_failures": 0,
+  "passed": true,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_overlapped",
+  "steps_per_epoch": 195
+}
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 2.3078755475580692e-05,
+    "enqueue_latency_sec_total": 4.22040522552561,
+    "num_events": 35,
+    "snapshot_time_sec_total": 0.02127027150709182,
+    "stall_time_sec_total": 5.881833159131929,
+    "write_time_sec_total": 0.8485498619265854
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 11.240754929753288,
+  "replayed_steps": 0,
+  "restarts": 2,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_overlapped",
+  "supervisor": {
+    "attempts": 3,
+    "duration_sec": 154.54904532432556,
+    "restarts": 2,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771140795.6964045
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 142.33919429779053
+}
+{
+  "candidate_run": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_blocking",
+  "loss_divergence": {
+    "auc_abs_diff": 166.18411615490913,
+    "max_abs_diff": 3.110137939453125,
+    "mean_abs_diff": 0.10388307409361004,
+    "num_common_steps": 1600
+  },
+  "reference_run": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_reference",
+  "steps": {
+    "1200": {
+      "available": true,
+      "candidate_digest": "a46e0b4c0a19a78a217ae1ae9742d66f85c748e1ab234558bbf4cc461823f020",
+      "l2_distance": 801.1748668559528,
+      "reference_digest": "2818282b97135526f34e1fbc3760d260682f2242bf88b92b41e474a3827cb878"
+    },
+    "1600": {
+      "available": true,
+      "candidate_digest": "1280de092414b3efad212b8a04021c8b1e87c1b96367cff61742039cd2a0a666",
+      "l2_distance": 785.8593974484327,
+      "reference_digest": "7109ae33678d8f218a2c50c4253930851c4f42461b8dc0b4e17437e6fe0490df"
+    },
+    "200": {
+      "available": true,
+      "candidate_digest": "f10d6d3151aa138652031ed10227332353c9bb6aa0bf06acb1ace5eacb61f8b0",
+      "l2_distance": 2784.5772359540083,
+      "reference_digest": "c0806e2bbd0eabe303b3087f5fd559442a008c5b5c7ab545ffee211683c478d6"
+    },
+    "400": {
+      "available": true,
+      "candidate_digest": "47c20637692bd00f82af4607a8c922410f27392c55068e934c92aad13b7aeb40",
+      "l2_distance": 1876.8530547777073,
+      "reference_digest": "54e37dd98b6c9f54a810f1c93231ab90a187ae8f6aad26f938049594fc44d0f6"
+    },
+    "800": {
+      "available": true,
+      "candidate_digest": "ba14e40157b2a320636c4fea90af3a32a85de5357a5ec4e37f46e7f274c7bbf0",
+      "l2_distance": 996.1816386821516,
+      "reference_digest": "8ac2b5812b0da0f741fb35cb6b0cc98026a1824bb757f3be5f780f5e2eb9615d"
+    }
+  }
+}
+{
+  "candidate_run": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_overlapped",
+  "loss_divergence": {
+    "auc_abs_diff": 170.2024693787098,
+    "max_abs_diff": 3.7059783935546875,
+    "mean_abs_diff": 0.10640020104125142,
+    "num_common_steps": 1600
+  },
+  "reference_run": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_reference",
+  "steps": {
+    "1200": {
+      "available": true,
+      "candidate_digest": "d6304369f480d531cfe92832e7d4a677ad012488fe82113a9111ef2f32fb6e33",
+      "l2_distance": 831.1098455662412,
+      "reference_digest": "2818282b97135526f34e1fbc3760d260682f2242bf88b92b41e474a3827cb878"
+    },
+    "1600": {
+      "available": true,
+      "candidate_digest": "8d6c5c46c13fb461bcec24e9e03059a2dccbafd7e78b75bbcf6269509ca262af",
+      "l2_distance": 807.0692766078448,
+      "reference_digest": "7109ae33678d8f218a2c50c4253930851c4f42461b8dc0b4e17437e6fe0490df"
+    },
+    "200": {
+      "available": true,
+      "candidate_digest": "d04dc72e499f59ffddb3f845b6ab307756f858c43f174b7d262ac6100e5c1b20",
+      "l2_distance": 3239.9964272001466,
+      "reference_digest": "c0806e2bbd0eabe303b3087f5fd559442a008c5b5c7ab545ffee211683c478d6"
+    },
+    "400": {
+      "available": true,
+      "candidate_digest": "48ec2fa4eb304004634f950a1b4b40ee3171f652247ffce651e64be1bde41834",
+      "l2_distance": 2101.9349306816575,
+      "reference_digest": "54e37dd98b6c9f54a810f1c93231ab90a187ae8f6aad26f938049594fc44d0f6"
+    },
+    "800": {
+      "available": true,
+      "candidate_digest": "cc193c6b0a7f037fe257a36d3fc1444ec442d7308d7fc33d575ed85963d652d2",
+      "l2_distance": 1063.5544157217591,
+      "reference_digest": "8ac2b5812b0da0f741fb35cb6b0cc98026a1824bb757f3be5f780f5e2eb9615d"
+    }
+  }
+}
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 13.322988357049656,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_reference",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_reference"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 13.322988357049656,
+      "replayed_steps": 0,
+      "restarts": 0,
+      "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_reference",
+      "snapshot_time_sec_total": 0.02204492490272969,
+      "stall_time_sec_total": 12.831689249607734,
+      "wall_clock_time_sec": 120.09317708015442,
+      "write_time_sec_total": 12.686648808186874
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.02204492490272969,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 12.831689249607734,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 120.09317708015442,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 12.686648808186874,
+    "n": 1,
+    "std": 0.0
+  }
+}
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 11.214306985472135,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_failure_blocking",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 2.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_blocking"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 11.214306985472135,
+      "replayed_steps": 0,
+      "restarts": 2,
+      "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_blocking",
+      "snapshot_time_sec_total": 0.020750589901581407,
+      "stall_time_sec_total": 10.822092527057976,
+      "wall_clock_time_sec": 142.67488861083984,
+      "write_time_sec_total": 10.68486475024838
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.020750589901581407,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 10.822092527057976,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 142.67488861083984,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 10.68486475024838,
+    "n": 1,
+    "std": 0.0
+  }
+}
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 11.240754929753288,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_failure_overlapped",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 2.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_overlapped"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 11.240754929753288,
+      "replayed_steps": 0,
+      "restarts": 2,
+      "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_failure_overlapped",
+      "snapshot_time_sec_total": 0.02127027150709182,
+      "stall_time_sec_total": 5.881833159131929,
+      "wall_clock_time_sec": 142.33919429779053,
+      "write_time_sec_total": 0.8485498619265854
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.02127027150709182,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 5.881833159131929,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 142.33919429779053,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.8485498619265854,
+    "n": 1,
+    "std": 0.0
+  }
+}
+{
+  "markdown": "results/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_publishable.md",
+  "json": "results/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_publishable.json"
+}
+[DONE] Publishable markdown: results/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_publishable.md
+[DONE] Publishable json: results/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_publishable.json
+[MATRIX 3/8] run_prefix=exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4 dataset=cifar10 model=resnet50 fail=400,1200 k=50 inflight=4 port_base=40146
+[INFO] Run prefix: exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4
+[INFO] Results dir: results/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4
+[INFO] Runtime patch check: ok
+[INFO] Profile: small
+[INFO] Dataset: cifar10 (size=50000)
+[INFO] Model: resnet50
+[INFO] Seeds: 1337
+[INFO] NPROC: 4
+[RUN] exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_reference seed=1337 nproc=4 target=1600 strategy=blocking fail=none
+[RUN] exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_blocking seed=1337 nproc=4 target=1600 strategy=blocking fail=400,1200
+[ECRL][fail-inject] step=400 strategy=blocking starting pre-exit flush/barrier
+[ECRL][fail-inject] step=400 entering synchronized exit barrier
+[ECRL][fail-inject] step=400 all ranks exiting with 137 after synchronized flush
+W0215 15:38:47.421000 4022616 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4022626 closing signal SIGTERM
+W0215 15:38:47.422000 4022616 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4022627 closing signal SIGTERM
+E0215 15:38:47.487000 4022616 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 2 (pid: 4022628) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:38:47
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4022629)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:38:47
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4022626)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:38:47
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4022627)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:38:47
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4022628)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_blocking/step_00000400.pt global_step=400 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[ECRL][fail-inject] step=1200 strategy=blocking starting pre-exit flush/barrier
+[ECRL][fail-inject] step=1200 entering synchronized exit barrier
+[ECRL][fail-inject] step=1200 all ranks exiting with 137 after synchronized flush
+W0215 15:40:47.899000 4022858 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4022871 closing signal SIGTERM
+W0215 15:40:47.900000 4022858 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4022874 closing signal SIGTERM
+E0215 15:40:47.996000 4022858 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 1 (pid: 4022872) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:40:47
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4022873)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:40:47
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4022871)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:40:47
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4022874)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:40:47
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4022872)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_blocking/step_00001200.pt global_step=1200 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[RUN] exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_overlapped seed=1337 nproc=4 target=1600 strategy=overlapped fail=400,1200
+[ECRL][fail-inject] step=400 strategy=overlapped starting pre-exit flush/barrier
+[ECRL][fail-inject] step=400 flush_done_sec=1.212
+[ECRL][fail-inject] step=400 close_done_sec=0.724
+[ECRL][fail-inject] step=400 entering synchronized exit barrier
+[ECRL][fail-inject] step=400 all ranks exiting with 137 after synchronized flush
+/tmp2/b11902156/miniconda3/envs/ecrl/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+W0215 15:42:58.261000 4023450 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4023460 closing signal SIGTERM
+W0215 15:42:58.262000 4023450 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4023462 closing signal SIGTERM
+W0215 15:42:58.262000 4023450 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4023463 closing signal SIGTERM
+E0215 15:42:58.428000 4023450 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 1 (pid: 4023461) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:42:58
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4023460)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:42:58
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4023462)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:42:58
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4023463)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:42:58
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4023461)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_overlapped/step_00000400.pt global_step=400 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[ECRL][fail-inject] step=1200 strategy=overlapped starting pre-exit flush/barrier
+[ECRL][fail-inject] step=1200 flush_done_sec=1.250
+[ECRL][fail-inject] step=1200 close_done_sec=0.916
+[ECRL][fail-inject] step=1200 entering synchronized exit barrier
+[ECRL][fail-inject] step=1200 all ranks exiting with 137 after synchronized flush
+/tmp2/b11902156/miniconda3/envs/ecrl/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+W0215 15:44:55.038000 4023647 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4023658 closing signal SIGTERM
+W0215 15:44:55.039000 4023647 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4023659 closing signal SIGTERM
+E0215 15:44:55.104000 4023647 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 0 (pid: 4023657) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:44:55
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4023660)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:44:55
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4023658)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:44:55
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4023659)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:44:55
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4023657)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_overlapped/step_00001200.pt global_step=1200 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+{
+  "epochs": {
+    "0": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "1": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "2": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "3": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "4": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "5": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "6": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "7": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "8": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 40
+    }
+  },
+  "failures": [],
+  "global_batch": 256,
+  "num_failures": 0,
+  "passed": true,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_reference",
+  "steps_per_epoch": 195
+}
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 0.0,
+    "enqueue_latency_sec_total": 0.0,
+    "num_events": 32,
+    "snapshot_time_sec_total": 0.03560898592695594,
+    "stall_time_sec_total": 24.1169235605048,
+    "write_time_sec_total": 24.01745203160681
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 8.574328786801262,
+  "replayed_steps": 0,
+  "restarts": 0,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_reference",
+  "supervisor": {
+    "attempts": 1,
+    "duration_sec": 199.11283159255981,
+    "restarts": 0,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771141062.7130497
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 186.60352778434753
+}
+{
+  "epochs": {
+    "0": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "1": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "2": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "3": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "4": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "5": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "6": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "7": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "8": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 40
+    }
+  },
+  "failures": [],
+  "global_batch": 256,
+  "num_failures": 0,
+  "passed": true,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_blocking",
+  "steps_per_epoch": 195
+}
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 0.0,
+    "enqueue_latency_sec_total": 0.0,
+    "num_events": 32,
+    "snapshot_time_sec_total": 0.04166814289055765,
+    "stall_time_sec_total": 24.282534724799916,
+    "write_time_sec_total": 24.108155623660423
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 6.722161791191809,
+  "replayed_steps": 0,
+  "restarts": 2,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_blocking",
+  "supervisor": {
+    "attempts": 3,
+    "duration_sec": 250.09496641159058,
+    "restarts": 2,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771141314.7472997
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 238.0186686515808
+}
+{
+  "epochs": {
+    "0": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "1": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "2": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "3": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "4": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "5": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "6": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "7": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "8": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 40
+    }
+  },
+  "failures": [],
+  "global_batch": 256,
+  "num_failures": 0,
+  "passed": true,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_overlapped",
+  "steps_per_epoch": 195
+}
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 2.07370612770319e-05,
+    "enqueue_latency_sec_total": 7.420407923636958,
+    "num_events": 35,
+    "snapshot_time_sec_total": 0.04000688891392201,
+    "stall_time_sec_total": 9.751690504257567,
+    "write_time_sec_total": 1.8187960039358586
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 6.857560673693627,
+  "replayed_steps": 0,
+  "restarts": 2,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_overlapped",
+  "supervisor": {
+    "attempts": 3,
+    "duration_sec": 246.6973090171814,
+    "restarts": 2,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771141563.4417284
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 233.3191168308258
+}
+{
+  "candidate_run": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_blocking",
+  "loss_divergence": {
+    "auc_abs_diff": 60.414974212646484,
+    "max_abs_diff": 0.3082275390625,
+    "mean_abs_diff": 0.03777170896530151,
+    "num_common_steps": 1600
+  },
+  "reference_run": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_reference",
+  "steps": {
+    "1200": {
+      "available": true,
+      "candidate_digest": "c659667ddec8e2be6af674c5bc981c3e28cc3ce45f5ac40c971c6162e7f640dd",
+      "l2_distance": 352190.4983241771,
+      "reference_digest": "3fe7bc8d03e82c168dd613e53b3f0c8063bbbeb5a4e2a73c14802cec1a4b1803"
+    },
+    "1600": {
+      "available": true,
+      "candidate_digest": "cdcb9382cebeaa5dfd832905a0ebb36edb291f9e99ed28930f9bf3ecec06f1f5",
+      "l2_distance": 309525.9783558606,
+      "reference_digest": "3beb79ce58fd69a3dadc65031b8ed808357a5b45f1191a9eca7e0630fca48c0d"
+    },
+    "200": {
+      "available": true,
+      "candidate_digest": "dc33ebdf4a7de1f8e268bff754c81cb91ee5e2983e48f417162eaebe04fe2221",
+      "l2_distance": 0.0,
+      "reference_digest": "dc33ebdf4a7de1f8e268bff754c81cb91ee5e2983e48f417162eaebe04fe2221"
+    },
+    "400": {
+      "available": true,
+      "candidate_digest": "e27704e1f55b1b37ca4aa7751105e967aba61ce6b927db346b9940a3c72ee99d",
+      "l2_distance": 0.0,
+      "reference_digest": "e27704e1f55b1b37ca4aa7751105e967aba61ce6b927db346b9940a3c72ee99d"
+    },
+    "800": {
+      "available": true,
+      "candidate_digest": "61ff5b9a71ed9b8171f3994176f6c3fa7dfa6c7a7faadabb9684732c7964b21d",
+      "l2_distance": 463567.9933421553,
+      "reference_digest": "ff6f24aaaaeff70352e4c4edae2496257d0fe3f13ea87f4e57ff4d14cac6114e"
+    }
+  }
+}
+{
+  "candidate_run": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_overlapped",
+  "loss_divergence": {
+    "auc_abs_diff": 60.414974212646484,
+    "max_abs_diff": 0.3082275390625,
+    "mean_abs_diff": 0.03777170896530151,
+    "num_common_steps": 1600
+  },
+  "reference_run": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_reference",
+  "steps": {
+    "1200": {
+      "available": true,
+      "candidate_digest": "c659667ddec8e2be6af674c5bc981c3e28cc3ce45f5ac40c971c6162e7f640dd",
+      "l2_distance": 352190.4983241771,
+      "reference_digest": "3fe7bc8d03e82c168dd613e53b3f0c8063bbbeb5a4e2a73c14802cec1a4b1803"
+    },
+    "1600": {
+      "available": true,
+      "candidate_digest": "cdcb9382cebeaa5dfd832905a0ebb36edb291f9e99ed28930f9bf3ecec06f1f5",
+      "l2_distance": 309525.9783558606,
+      "reference_digest": "3beb79ce58fd69a3dadc65031b8ed808357a5b45f1191a9eca7e0630fca48c0d"
+    },
+    "200": {
+      "available": true,
+      "candidate_digest": "dc33ebdf4a7de1f8e268bff754c81cb91ee5e2983e48f417162eaebe04fe2221",
+      "l2_distance": 0.0,
+      "reference_digest": "dc33ebdf4a7de1f8e268bff754c81cb91ee5e2983e48f417162eaebe04fe2221"
+    },
+    "400": {
+      "available": true,
+      "candidate_digest": "e27704e1f55b1b37ca4aa7751105e967aba61ce6b927db346b9940a3c72ee99d",
+      "l2_distance": 0.0,
+      "reference_digest": "e27704e1f55b1b37ca4aa7751105e967aba61ce6b927db346b9940a3c72ee99d"
+    },
+    "800": {
+      "available": true,
+      "candidate_digest": "61ff5b9a71ed9b8171f3994176f6c3fa7dfa6c7a7faadabb9684732c7964b21d",
+      "l2_distance": 463567.9933421553,
+      "reference_digest": "ff6f24aaaaeff70352e4c4edae2496257d0fe3f13ea87f4e57ff4d14cac6114e"
+    }
+  }
+}
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 8.574328786801262,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_reference",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_reference"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 8.574328786801262,
+      "replayed_steps": 0,
+      "restarts": 0,
+      "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_reference",
+      "snapshot_time_sec_total": 0.03560898592695594,
+      "stall_time_sec_total": 24.1169235605048,
+      "wall_clock_time_sec": 186.60352778434753,
+      "write_time_sec_total": 24.01745203160681
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.03560898592695594,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 24.1169235605048,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 186.60352778434753,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 24.01745203160681,
+    "n": 1,
+    "std": 0.0
+  }
+}
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 6.722161791191809,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_failure_blocking",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 2.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_blocking"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 6.722161791191809,
+      "replayed_steps": 0,
+      "restarts": 2,
+      "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_blocking",
+      "snapshot_time_sec_total": 0.04166814289055765,
+      "stall_time_sec_total": 24.282534724799916,
+      "wall_clock_time_sec": 238.0186686515808,
+      "write_time_sec_total": 24.108155623660423
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.04166814289055765,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 24.282534724799916,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 238.0186686515808,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 24.108155623660423,
+    "n": 1,
+    "std": 0.0
+  }
+}
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 6.857560673693627,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_failure_overlapped",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 2.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_overlapped"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 6.857560673693627,
+      "replayed_steps": 0,
+      "restarts": 2,
+      "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_overlapped",
+      "snapshot_time_sec_total": 0.04000688891392201,
+      "stall_time_sec_total": 9.751690504257567,
+      "wall_clock_time_sec": 233.3191168308258,
+      "write_time_sec_total": 1.8187960039358586
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.04000688891392201,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 9.751690504257567,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 233.3191168308258,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 1.8187960039358586,
+    "n": 1,
+    "std": 0.0
+  }
+}
+{
+  "markdown": "results/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_publishable.md",
+  "json": "results/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_publishable.json"
+}
+[DONE] Publishable markdown: results/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_publishable.md
+[DONE] Publishable json: results/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_publishable.json
+[MATRIX 4/8] run_prefix=exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4 dataset=cifar10 model=resnet50 fail=800,1400 k=50 inflight=4 port_base=40196
+[INFO] Run prefix: exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4
+[INFO] Results dir: results/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4
+[INFO] Runtime patch check: ok
+[INFO] Profile: small
+[INFO] Dataset: cifar10 (size=50000)
+[INFO] Model: resnet50
+[INFO] Seeds: 1337
+[INFO] NPROC: 4
+[RUN] exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_reference seed=1337 nproc=4 target=1600 strategy=blocking fail=none
+[RUN] exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_blocking seed=1337 nproc=4 target=1600 strategy=blocking fail=800,1400
+[ECRL][fail-inject] step=800 strategy=blocking starting pre-exit flush/barrier
+[ECRL][fail-inject] step=800 entering synchronized exit barrier
+[ECRL][fail-inject] step=800 all ranks exiting with 137 after synchronized flush
+W0215 15:53:14.264000 4025354 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4025378 closing signal SIGTERM
+W0215 15:53:14.265000 4025354 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4025380 closing signal SIGTERM
+E0215 15:53:14.361000 4025354 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 1 (pid: 4025379) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:53:14
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4025381)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:53:14
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4025378)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:53:14
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4025380)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:53:14
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4025379)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_blocking/step_00000800.pt global_step=800 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[ECRL][fail-inject] step=1400 strategy=blocking starting pre-exit flush/barrier
+[ECRL][fail-inject] step=1400 entering synchronized exit barrier
+[ECRL][fail-inject] step=1400 all ranks exiting with 137 after synchronized flush
+W0215 15:54:49.521000 4025797 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4025809 closing signal SIGTERM
+W0215 15:54:49.522000 4025797 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4025811 closing signal SIGTERM
+E0215 15:54:49.587000 4025797 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 1 (pid: 4025810) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:54:49
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4025812)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:54:49
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4025809)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:54:49
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4025811)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:54:49
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4025810)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_blocking/step_00001400.pt global_step=1400 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[RUN] exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_overlapped seed=1337 nproc=4 target=1600 strategy=overlapped fail=800,1400
+[ECRL][fail-inject] step=800 strategy=overlapped starting pre-exit flush/barrier
+[ECRL][fail-inject] step=800 flush_done_sec=1.278
+[ECRL][fail-inject] step=800 close_done_sec=0.785
+[ECRL][fail-inject] step=800 entering synchronized exit barrier
+[ECRL][fail-inject] step=800 all ranks exiting with 137 after synchronized flush
+/tmp2/b11902156/miniconda3/envs/ecrl/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+W0215 15:57:29.965000 4026279 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4026296 closing signal SIGTERM
+W0215 15:57:29.966000 4026279 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4026299 closing signal SIGTERM
+E0215 15:57:30.081000 4026279 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 1 (pid: 4026297) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:57:29
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4026298)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:57:30
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4026296)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:57:30
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4026299)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:57:29
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4026297)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_overlapped/step_00000800.pt global_step=800 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[ECRL][fail-inject] step=1400 strategy=overlapped starting pre-exit flush/barrier
+[ECRL][fail-inject] step=1400 flush_done_sec=1.239
+[ECRL][fail-inject] step=1400 close_done_sec=0.647
+[ECRL][fail-inject] step=1400 entering synchronized exit barrier
+[ECRL][fail-inject] step=1400 all ranks exiting with 137 after synchronized flush
+/tmp2/b11902156/miniconda3/envs/ecrl/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+W0215 15:59:00.576000 4026618 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4026628 closing signal SIGTERM
+W0215 15:59:00.577000 4026618 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4026631 closing signal SIGTERM
+E0215 15:59:00.692000 4026618 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 1 (pid: 4026629) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_15:59:00
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4026630)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_15:59:00
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4026628)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_15:59:00
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4026631)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_15:59:00
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4026629)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_overlapped/step_00001400.pt global_step=1400 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+{
+  "epochs": {
+    "0": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "1": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "2": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "3": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "4": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "5": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "6": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "7": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "8": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 40
+    }
+  },
+  "failures": [],
+  "global_batch": 256,
+  "num_failures": 0,
+  "passed": true,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_reference",
+  "steps_per_epoch": 195
+}
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 0.0,
+    "enqueue_latency_sec_total": 0.0,
+    "num_events": 32,
+    "snapshot_time_sec_total": 0.03781290678307414,
+    "stall_time_sec_total": 24.7100865872344,
+    "write_time_sec_total": 24.49226934532635
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 7.2258543770720705,
+  "replayed_steps": 0,
+  "restarts": 0,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_reference",
+  "supervisor": {
+    "attempts": 1,
+    "duration_sec": 233.41918015480042,
+    "restarts": 0,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771141873.0761075
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 221.42710280418396
+}
+{
+  "epochs": {
+    "0": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "1": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "2": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "3": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "4": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "5": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "6": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "7": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "8": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 40
+    }
+  },
+  "failures": [],
+  "global_batch": 256,
+  "num_failures": 0,
+  "passed": true,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_blocking",
+  "steps_per_epoch": 195
+}
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 0.0,
+    "enqueue_latency_sec_total": 0.0,
+    "num_events": 32,
+    "snapshot_time_sec_total": 0.041164900874719024,
+    "stall_time_sec_total": 24.719190350268036,
+    "write_time_sec_total": 24.49970226525329
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 6.605791325104758,
+  "replayed_steps": 0,
+  "restarts": 2,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_blocking",
+  "supervisor": {
+    "attempts": 3,
+    "duration_sec": 254.37904405593872,
+    "restarts": 2,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771142129.8153293
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 242.21170806884766
+}
+{
+  "epochs": {
+    "0": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "1": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "2": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "3": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "4": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "5": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "6": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "7": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "8": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 40
+    }
+  },
+  "failures": [],
+  "global_batch": 256,
+  "num_failures": 0,
+  "passed": true,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_overlapped",
+  "steps_per_epoch": 195
+}
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 2.026534639298916e-05,
+    "enqueue_latency_sec_total": 7.089827980962582,
+    "num_events": 35,
+    "snapshot_time_sec_total": 0.03886202012654394,
+    "stall_time_sec_total": 10.1076445375802,
+    "write_time_sec_total": 1.9490958609385416
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 6.802992468790563,
+  "replayed_steps": 0,
+  "restarts": 2,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_overlapped",
+  "supervisor": {
+    "attempts": 3,
+    "duration_sec": 248.93569254875183,
+    "restarts": 2,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771142380.6545959
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 235.19061756134033
+}
+{
+  "candidate_run": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_blocking",
+  "loss_divergence": {
+    "auc_abs_diff": 39.36244201660156,
+    "max_abs_diff": 0.21282958984375,
+    "mean_abs_diff": 0.024609622955322267,
+    "num_common_steps": 1600
+  },
+  "reference_run": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_reference",
+  "steps": {
+    "1200": {
+      "available": true,
+      "candidate_digest": "5420098b0ad99ce76f90fdbdad4816cd0afe2544650abc23ef76a5cdc594dd08",
+      "l2_distance": 63812.19660372568,
+      "reference_digest": "3fe7bc8d03e82c168dd613e53b3f0c8063bbbeb5a4e2a73c14802cec1a4b1803"
+    },
+    "1600": {
+      "available": true,
+      "candidate_digest": "0b53db7cd90f90d7b35547a059989815a899daab6ac8a66801f17a98bd2befe3",
+      "l2_distance": 54133.49077174656,
+      "reference_digest": "3beb79ce58fd69a3dadc65031b8ed808357a5b45f1191a9eca7e0630fca48c0d"
+    },
+    "200": {
+      "available": true,
+      "candidate_digest": "dc33ebdf4a7de1f8e268bff754c81cb91ee5e2983e48f417162eaebe04fe2221",
+      "l2_distance": 0.0,
+      "reference_digest": "dc33ebdf4a7de1f8e268bff754c81cb91ee5e2983e48f417162eaebe04fe2221"
+    },
+    "400": {
+      "available": true,
+      "candidate_digest": "e27704e1f55b1b37ca4aa7751105e967aba61ce6b927db346b9940a3c72ee99d",
+      "l2_distance": 0.0,
+      "reference_digest": "e27704e1f55b1b37ca4aa7751105e967aba61ce6b927db346b9940a3c72ee99d"
+    },
+    "800": {
+      "available": true,
+      "candidate_digest": "ff6f24aaaaeff70352e4c4edae2496257d0fe3f13ea87f4e57ff4d14cac6114e",
+      "l2_distance": 0.0,
+      "reference_digest": "ff6f24aaaaeff70352e4c4edae2496257d0fe3f13ea87f4e57ff4d14cac6114e"
+    }
+  }
+}
+{
+  "candidate_run": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_overlapped",
+  "loss_divergence": {
+    "auc_abs_diff": 39.36244201660156,
+    "max_abs_diff": 0.21282958984375,
+    "mean_abs_diff": 0.024609622955322267,
+    "num_common_steps": 1600
+  },
+  "reference_run": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_reference",
+  "steps": {
+    "1200": {
+      "available": true,
+      "candidate_digest": "5420098b0ad99ce76f90fdbdad4816cd0afe2544650abc23ef76a5cdc594dd08",
+      "l2_distance": 63812.19660372568,
+      "reference_digest": "3fe7bc8d03e82c168dd613e53b3f0c8063bbbeb5a4e2a73c14802cec1a4b1803"
+    },
+    "1600": {
+      "available": true,
+      "candidate_digest": "0b53db7cd90f90d7b35547a059989815a899daab6ac8a66801f17a98bd2befe3",
+      "l2_distance": 54133.49077174656,
+      "reference_digest": "3beb79ce58fd69a3dadc65031b8ed808357a5b45f1191a9eca7e0630fca48c0d"
+    },
+    "200": {
+      "available": true,
+      "candidate_digest": "dc33ebdf4a7de1f8e268bff754c81cb91ee5e2983e48f417162eaebe04fe2221",
+      "l2_distance": 0.0,
+      "reference_digest": "dc33ebdf4a7de1f8e268bff754c81cb91ee5e2983e48f417162eaebe04fe2221"
+    },
+    "400": {
+      "available": true,
+      "candidate_digest": "e27704e1f55b1b37ca4aa7751105e967aba61ce6b927db346b9940a3c72ee99d",
+      "l2_distance": 0.0,
+      "reference_digest": "e27704e1f55b1b37ca4aa7751105e967aba61ce6b927db346b9940a3c72ee99d"
+    },
+    "800": {
+      "available": true,
+      "candidate_digest": "ff6f24aaaaeff70352e4c4edae2496257d0fe3f13ea87f4e57ff4d14cac6114e",
+      "l2_distance": 0.0,
+      "reference_digest": "ff6f24aaaaeff70352e4c4edae2496257d0fe3f13ea87f4e57ff4d14cac6114e"
+    }
+  }
+}
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 7.2258543770720705,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_reference",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_reference"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 7.2258543770720705,
+      "replayed_steps": 0,
+      "restarts": 0,
+      "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_reference",
+      "snapshot_time_sec_total": 0.03781290678307414,
+      "stall_time_sec_total": 24.7100865872344,
+      "wall_clock_time_sec": 221.42710280418396,
+      "write_time_sec_total": 24.49226934532635
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.03781290678307414,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 24.7100865872344,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 221.42710280418396,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 24.49226934532635,
+    "n": 1,
+    "std": 0.0
+  }
+}
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 6.605791325104758,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_failure_blocking",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 2.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_blocking"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 6.605791325104758,
+      "replayed_steps": 0,
+      "restarts": 2,
+      "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_blocking",
+      "snapshot_time_sec_total": 0.041164900874719024,
+      "stall_time_sec_total": 24.719190350268036,
+      "wall_clock_time_sec": 242.21170806884766,
+      "write_time_sec_total": 24.49970226525329
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.041164900874719024,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 24.719190350268036,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 242.21170806884766,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 24.49970226525329,
+    "n": 1,
+    "std": 0.0
+  }
+}
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 6.802992468790563,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_failure_overlapped",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 2.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_overlapped"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 6.802992468790563,
+      "replayed_steps": 0,
+      "restarts": 2,
+      "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_overlapped",
+      "snapshot_time_sec_total": 0.03886202012654394,
+      "stall_time_sec_total": 10.1076445375802,
+      "wall_clock_time_sec": 235.19061756134033,
+      "write_time_sec_total": 1.9490958609385416
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.03886202012654394,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 10.1076445375802,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 235.19061756134033,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 1.9490958609385416,
+    "n": 1,
+    "std": 0.0
+  }
+}
+{
+  "markdown": "results/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_publishable.md",
+  "json": "results/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_publishable.json"
+}
+[DONE] Publishable markdown: results/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_publishable.md
+[DONE] Publishable json: results/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4/reports/exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_publishable.json
+[MATRIX 5/8] run_prefix=exp4_matrix_20260215_151709_cifar100_resnet18_fbase_k50_m4 dataset=cifar100 model=resnet18 fail=400,1200 k=50 inflight=4 port_base=40246
+[INFO] Run prefix: exp4_matrix_20260215_151709_cifar100_resnet18_fbase_k50_m4
+[INFO] Results dir: results/exp4_matrix_20260215_151709_cifar100_resnet18_fbase_k50_m4
+[INFO] Runtime patch check: ok
+[INFO] Profile: small
+[INFO] Dataset: cifar100 (size=50000)
+[INFO] Model: resnet18
+[INFO] Seeds: 1337
+[INFO] NPROC: 4
+[RUN] exp4_matrix_20260215_151709_cifar100_resnet18_fbase_k50_m4_s1337_reference seed=1337 nproc=4 target=1600 strategy=blocking fail=none
+[RUN] exp4_matrix_20260215_151709_cifar100_resnet18_fbase_k50_m4_s1337_failure_blocking seed=1337 nproc=4 target=1600 strategy=blocking fail=400,1200
+[ECRL][fail-inject] step=400 strategy=blocking starting pre-exit flush/barrier
+[ECRL][fail-inject] step=400 entering synchronized exit barrier
+[ECRL][fail-inject] step=400 all ranks exiting with 137 after synchronized flush
+W0215 16:03:51.034000 4028140 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4028156 closing signal SIGTERM
+W0215 16:03:51.035000 4028140 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4028157 closing signal SIGTERM
+E0215 16:03:51.107000 4028140 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 2 (pid: 4028158) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_16:03:51
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4028159)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_16:03:51
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4028156)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_16:03:51
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4028157)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_16:03:51
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4028158)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar100_resnet18_fbase_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar100_resnet18_fbase_k50_m4_s1337_failure_blocking/step_00000400.pt global_step=400 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[ECRL][fail-inject] step=1200 strategy=blocking starting pre-exit flush/barrier
+[ECRL][fail-inject] step=1200 entering synchronized exit barrier
+[ECRL][fail-inject] step=1200 all ranks exiting with 137 after synchronized flush
+W0215 16:05:02.967000 4028407 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4028425 closing signal SIGTERM
+W0215 16:05:02.968000 4028407 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4028427 closing signal SIGTERM
+W0215 16:05:02.968000 4028407 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4028428 closing signal SIGTERM
+E0215 16:05:03.083000 4028407 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 1 (pid: 4028426) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_16:05:03
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4028425)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_16:05:03
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4028427)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_16:05:03
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4028428)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_16:05:02
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4028426)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar100_resnet18_fbase_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar100_resnet18_fbase_k50_m4_s1337_failure_blocking/step_00001200.pt global_step=1200 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[RUN] exp4_matrix_20260215_151709_cifar100_resnet18_fbase_k50_m4_s1337_failure_overlapped seed=1337 nproc=4 target=1600 strategy=overlapped fail=400,1200
+[ECRL][fail-inject] step=400 strategy=overlapped starting pre-exit flush/barrier
+[ECRL][fail-inject] step=400 flush_done_sec=0.608
+[ECRL][fail-inject] step=400 close_done_sec=0.701
+[ECRL][fail-inject] step=400 entering synchronized exit barrier
+[ECRL][fail-inject] step=400 all ranks exiting with 137 after synchronized flush
+/tmp2/b11902156/miniconda3/envs/ecrl/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+W0215 16:06:26.512000 4029135 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4029145 closing signal SIGTERM
+W0215 16:06:26.513000 4029135 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4029146 closing signal SIGTERM
+W0215 16:06:26.514000 4029135 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4029147 closing signal SIGTERM
+E0215 16:06:26.636000 4029135 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 3 (pid: 4029148) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_16:06:26
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4029145)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_16:06:26
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4029146)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_16:06:26
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4029147)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_16:06:26
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4029148)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar100_resnet18_fbase_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar100_resnet18_fbase_k50_m4_s1337_failure_overlapped/step_00000400.pt global_step=400 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[ECRL][fail-inject] step=1200 strategy=overlapped starting pre-exit flush/barrier
+[ECRL][fail-inject] step=1200 flush_done_sec=0.640
+[ECRL][fail-inject] step=1200 close_done_sec=0.659
+[ECRL][fail-inject] step=1200 entering synchronized exit barrier
+[ECRL][fail-inject] step=1200 all ranks exiting with 137 after synchronized flush
+/tmp2/b11902156/miniconda3/envs/ecrl/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+W0215 16:07:35.750000 4029349 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4029367 closing signal SIGTERM
+W0215 16:07:35.751000 4029349 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4029368 closing signal SIGTERM
+W0215 16:07:35.751000 4029349 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4029370 closing signal SIGTERM
+E0215 16:07:35.867000 4029349 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 2 (pid: 4029369) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-15_16:07:35
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 4029367)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-15_16:07:35
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 4029368)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-15_16:07:35
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 4029370)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-15_16:07:35
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 4029369)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ECRL][resume] path=results/exp4_matrix_20260215_151709_cifar100_resnet18_fbase_k50_m4/checkpoints/exp4_matrix_20260215_151709_cifar100_resnet18_fbase_k50_m4_s1337_failure_overlapped/step_00001200.pt global_step=1200 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}

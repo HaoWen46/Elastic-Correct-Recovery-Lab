@@ -1,0 +1,61 @@
+$ /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python -m torch.distributed.run --max-restarts 0 --nnodes 1 --nproc_per_node 4 --master_addr 127.0.0.1 --master_port 33247 -m ecrl.train.ddp_train --config results/exp4_matrix_20260215_151709_cifar100_resnet50_flate_k50_m4/configs/exp4_matrix_20260215_151709_cifar100_resnet50_flate_k50_m4.yaml --run-id exp4_matrix_20260215_151709_cifar100_resnet50_flate_k50_m4_s1337_failure_blocking --results-dir results/exp4_matrix_20260215_151709_cifar100_resnet50_flate_k50_m4 --target-steps 1600 --checkpoint-strategy blocking --checkpoint-every 50 --max-inflight 4 --seed 1337 --fail-steps 800,1400
+[ECRL][fail-inject] step=800 strategy=blocking starting pre-exit flush/barrier
+[ECRL][fail-inject] step=800 entering synchronized exit barrier
+[ECRL][fail-inject] step=800 all ranks exiting with 137 after synchronized flush
+W0216 00:47:11.247000 10522 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 10534 closing signal SIGTERM
+W0216 00:47:11.247000 10522 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 10535 closing signal SIGTERM
+W0216 00:47:11.248000 10522 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 10537 closing signal SIGTERM
+E0216 00:47:11.413000 10522 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 2 (pid: 10536) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-16_00:47:11
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 10534)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-16_00:47:11
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 10535)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-16_00:47:11
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 10537)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-16_00:47:11
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 10536)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

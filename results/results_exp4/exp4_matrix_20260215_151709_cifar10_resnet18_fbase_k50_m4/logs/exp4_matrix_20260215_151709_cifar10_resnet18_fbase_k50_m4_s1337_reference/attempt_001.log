@@ -1,0 +1,35 @@
+$ /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python -m torch.distributed.run --max-restarts 0 --nnodes 1 --nproc_per_node 4 --master_addr 127.0.0.1 --master_port 40046 -m ecrl.train.ddp_train --config results/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4/configs/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4.yaml --run-id exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4_s1337_reference --results-dir results/exp4_matrix_20260215_151709_cifar10_resnet18_fbase_k50_m4 --target-steps 1600 --checkpoint-strategy blocking --checkpoint-every 50 --max-inflight 4 --seed 1337 --disable-failure
+W0215 15:18:39.983000 4017282 .venv/lib/python3.11/site-packages/torch/distributed/elastic/agent/server/api.py:739] Received 1 death signal, shutting down workers
+W0215 15:18:39.983000 4017282 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4017299 closing signal SIGHUP
+W0215 15:18:39.983000 4017282 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4017300 closing signal SIGHUP
+W0215 15:18:39.984000 4017282 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4017301 closing signal SIGHUP
+W0215 15:18:39.984000 4017282 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 4017302 closing signal SIGHUP
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 308, in launch_agent
+    result = agent.run()
+             ^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/metrics/api.py", line 134, in wrapper
+    result = f(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/agent/server/api.py", line 731, in run
+    result = self._invoke_run(role)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/agent/server/api.py", line 908, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 86, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 4017282 got signal: 1

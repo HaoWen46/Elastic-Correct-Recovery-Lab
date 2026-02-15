@@ -1,0 +1,66 @@
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 6.605791325104758,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_failure_blocking",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 2.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_blocking"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 6.605791325104758,
+      "replayed_steps": 0,
+      "restarts": 2,
+      "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_blocking",
+      "snapshot_time_sec_total": 0.041164900874719024,
+      "stall_time_sec_total": 24.719190350268036,
+      "wall_clock_time_sec": 242.21170806884766,
+      "write_time_sec_total": 24.49970226525329
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.041164900874719024,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 24.719190350268036,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 242.21170806884766,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 24.49970226525329,
+    "n": 1,
+    "std": 0.0
+  }
+}

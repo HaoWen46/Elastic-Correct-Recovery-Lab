@@ -1,0 +1,66 @@
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 6.857560673693627,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_failure_overlapped",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 2.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_overlapped"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 6.857560673693627,
+      "replayed_steps": 0,
+      "restarts": 2,
+      "run_id": "exp4_matrix_20260215_151709_cifar10_resnet50_fbase_k50_m4_s1337_failure_overlapped",
+      "snapshot_time_sec_total": 0.04000688891392201,
+      "stall_time_sec_total": 9.751690504257567,
+      "wall_clock_time_sec": 233.3191168308258,
+      "write_time_sec_total": 1.8187960039358586
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.04000688891392201,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 9.751690504257567,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 233.3191168308258,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 1.8187960039358586,
+    "n": 1,
+    "std": 0.0
+  }
+}

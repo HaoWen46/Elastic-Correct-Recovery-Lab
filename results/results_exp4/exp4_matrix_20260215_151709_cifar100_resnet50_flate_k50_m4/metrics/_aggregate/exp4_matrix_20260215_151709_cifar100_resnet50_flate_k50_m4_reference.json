@@ -1,0 +1,66 @@
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 8.387946358791218,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar100_resnet50_flate_k50_m4_reference",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar100_resnet50_flate_k50_m4_s1337_reference"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 8.387946358791218,
+      "replayed_steps": 0,
+      "restarts": 0,
+      "run_id": "exp4_matrix_20260215_151709_cifar100_resnet50_flate_k50_m4_s1337_reference",
+      "snapshot_time_sec_total": 0.03834677196573466,
+      "stall_time_sec_total": 24.856473213178106,
+      "wall_clock_time_sec": 190.74990844726562,
+      "write_time_sec_total": 24.66869167634286
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.03834677196573466,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 24.856473213178106,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 190.74990844726562,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 24.66869167634286,
+    "n": 1,
+    "std": 0.0
+  }
+}

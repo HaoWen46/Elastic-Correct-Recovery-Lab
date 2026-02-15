@@ -1,0 +1,27 @@
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 0.0,
+    "enqueue_latency_sec_total": 0.0,
+    "num_events": 32,
+    "snapshot_time_sec_total": 0.02204492490272969,
+    "stall_time_sec_total": 12.831689249607734,
+    "write_time_sec_total": 12.686648808186874
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 13.322988357049656,
+  "replayed_steps": 0,
+  "restarts": 0,
+  "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_reference",
+  "supervisor": {
+    "attempts": 1,
+    "duration_sec": 130.45985507965088,
+    "restarts": 0,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771140484.559757
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 120.09317708015442
+}

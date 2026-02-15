@@ -1,0 +1,33 @@
+seed: 1337
+dataset:
+  name: cifar10
+  root: ./data
+  train: true
+  download: true
+  size: 50000
+  image_size: 32
+  split_subdir: train
+training:
+  model_name: resnet50
+  precision: bf16
+  use_augmentation: true
+  scheduler: cosine
+  scheduler_t_max: 1600
+  scheduler_eta_min: 1.0e-06
+  max_grad_norm: 0.0
+  global_batch: 256
+  lr: 0.1
+  momentum: 0.9
+  weight_decay: 5e-4
+  max_steps: 1600
+  log_every: 10
+  debug_every: 100
+checkpoint:
+  strategy: blocking
+  every_k_steps: 50
+  max_inflight: 4
+failure:
+  enabled: true
+  steps:
+  - 400
+  - 1200

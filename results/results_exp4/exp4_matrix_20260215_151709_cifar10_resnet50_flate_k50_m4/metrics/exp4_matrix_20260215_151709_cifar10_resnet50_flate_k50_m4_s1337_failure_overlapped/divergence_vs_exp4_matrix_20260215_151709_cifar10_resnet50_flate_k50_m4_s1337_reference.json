@@ -1,0 +1,42 @@
+{
+  "candidate_run": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_failure_overlapped",
+  "loss_divergence": {
+    "auc_abs_diff": 39.36244201660156,
+    "max_abs_diff": 0.21282958984375,
+    "mean_abs_diff": 0.024609622955322267,
+    "num_common_steps": 1600
+  },
+  "reference_run": "exp4_matrix_20260215_151709_cifar10_resnet50_flate_k50_m4_s1337_reference",
+  "steps": {
+    "1200": {
+      "available": true,
+      "candidate_digest": "5420098b0ad99ce76f90fdbdad4816cd0afe2544650abc23ef76a5cdc594dd08",
+      "l2_distance": 63812.19660372568,
+      "reference_digest": "3fe7bc8d03e82c168dd613e53b3f0c8063bbbeb5a4e2a73c14802cec1a4b1803"
+    },
+    "1600": {
+      "available": true,
+      "candidate_digest": "0b53db7cd90f90d7b35547a059989815a899daab6ac8a66801f17a98bd2befe3",
+      "l2_distance": 54133.49077174656,
+      "reference_digest": "3beb79ce58fd69a3dadc65031b8ed808357a5b45f1191a9eca7e0630fca48c0d"
+    },
+    "200": {
+      "available": true,
+      "candidate_digest": "dc33ebdf4a7de1f8e268bff754c81cb91ee5e2983e48f417162eaebe04fe2221",
+      "l2_distance": 0.0,
+      "reference_digest": "dc33ebdf4a7de1f8e268bff754c81cb91ee5e2983e48f417162eaebe04fe2221"
+    },
+    "400": {
+      "available": true,
+      "candidate_digest": "e27704e1f55b1b37ca4aa7751105e967aba61ce6b927db346b9940a3c72ee99d",
+      "l2_distance": 0.0,
+      "reference_digest": "e27704e1f55b1b37ca4aa7751105e967aba61ce6b927db346b9940a3c72ee99d"
+    },
+    "800": {
+      "available": true,
+      "candidate_digest": "ff6f24aaaaeff70352e4c4edae2496257d0fe3f13ea87f4e57ff4d14cac6114e",
+      "l2_distance": 0.0,
+      "reference_digest": "ff6f24aaaaeff70352e4c4edae2496257d0fe3f13ea87f4e57ff4d14cac6114e"
+    }
+  }
+}

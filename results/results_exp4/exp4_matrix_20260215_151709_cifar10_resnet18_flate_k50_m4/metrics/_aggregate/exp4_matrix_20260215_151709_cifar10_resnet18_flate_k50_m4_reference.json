@@ -1,0 +1,66 @@
+{
+  "correctness": {
+    "all_passed": true,
+    "pass_rate": 1.0
+  },
+  "goodput_steps_per_sec": {
+    "ci95": 0.0,
+    "mean": 13.322988357049656,
+    "n": 1,
+    "std": 0.0
+  },
+  "label": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_reference",
+  "num_runs": 1,
+  "replayed_steps": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "restarts": {
+    "ci95": 0.0,
+    "mean": 0.0,
+    "n": 1,
+    "std": 0.0
+  },
+  "run_ids": [
+    "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_reference"
+  ],
+  "runs": [
+    {
+      "correctness_passed": true,
+      "goodput_steps_per_sec": 13.322988357049656,
+      "replayed_steps": 0,
+      "restarts": 0,
+      "run_id": "exp4_matrix_20260215_151709_cifar10_resnet18_flate_k50_m4_s1337_reference",
+      "snapshot_time_sec_total": 0.02204492490272969,
+      "stall_time_sec_total": 12.831689249607734,
+      "wall_clock_time_sec": 120.09317708015442,
+      "write_time_sec_total": 12.686648808186874
+    }
+  ],
+  "snapshot_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 0.02204492490272969,
+    "n": 1,
+    "std": 0.0
+  },
+  "stall_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 12.831689249607734,
+    "n": 1,
+    "std": 0.0
+  },
+  "wall_clock_time_sec": {
+    "ci95": 0.0,
+    "mean": 120.09317708015442,
+    "n": 1,
+    "std": 0.0
+  },
+  "write_time_sec_total": {
+    "ci95": 0.0,
+    "mean": 12.686648808186874,
+    "n": 1,
+    "std": 0.0
+  }
+}

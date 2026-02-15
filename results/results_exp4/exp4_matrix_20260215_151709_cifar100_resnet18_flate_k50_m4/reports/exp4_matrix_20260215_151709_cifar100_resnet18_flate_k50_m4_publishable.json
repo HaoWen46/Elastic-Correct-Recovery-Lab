@@ -1,0 +1,274 @@
+{
+  "divergence": {
+    "failure_blocking": {
+      "l2_by_step": {
+        "1200": {
+          "mean": 108.87852898614712,
+          "n": 1,
+          "std": 0.0
+        },
+        "1600": {
+          "mean": 105.03928688329647,
+          "n": 1,
+          "std": 0.0
+        },
+        "200": {
+          "mean": 278.8982961175664,
+          "n": 1,
+          "std": 0.0
+        },
+        "400": {
+          "mean": 183.1620572613625,
+          "n": 1,
+          "std": 0.0
+        },
+        "800": {
+          "mean": 123.00182628534192,
+          "n": 1,
+          "std": 0.0
+        }
+      },
+      "loss_mean_abs_diff": {
+        "mean": 0.09728074878454208,
+        "n": 1,
+        "std": 0.0
+      }
+    },
+    "failure_overlapped": {
+      "l2_by_step": {
+        "1200": {
+          "mean": 107.72601721342248,
+          "n": 1,
+          "std": 0.0
+        },
+        "1600": {
+          "mean": 104.23221663678332,
+          "n": 1,
+          "std": 0.0
+        },
+        "200": {
+          "mean": 310.3333973351329,
+          "n": 1,
+          "std": 0.0
+        },
+        "400": {
+          "mean": 184.85412865532598,
+          "n": 1,
+          "std": 0.0
+        },
+        "800": {
+          "mean": 120.20316967803116,
+          "n": 1,
+          "std": 0.0
+        }
+      },
+      "loss_mean_abs_diff": {
+        "mean": 0.09696481719613076,
+        "n": 1,
+        "std": 0.0
+      }
+    }
+  },
+  "generated_at": "2026-02-16T00:29:54",
+  "num_seeds": 1,
+  "variants": {
+    "failure_blocking": {
+      "correctness": {
+        "all_passed": true,
+        "pass_rate": 1.0
+      },
+      "goodput_steps_per_sec": {
+        "ci95": 0.0,
+        "mean": 12.297896631733446,
+        "n": 1,
+        "std": 0.0
+      },
+      "label": "exp4_matrix_20260215_151709_cifar100_resnet18_flate_k50_m4_failure_blocking",
+      "num_runs": 1,
+      "replayed_steps": {
+        "ci95": 0.0,
+        "mean": 0.0,
+        "n": 1,
+        "std": 0.0
+      },
+      "restarts": {
+        "ci95": 0.0,
+        "mean": 2.0,
+        "n": 1,
+        "std": 0.0
+      },
+      "run_ids": [
+        "exp4_matrix_20260215_151709_cifar100_resnet18_flate_k50_m4_s1337_failure_blocking"
+      ],
+      "runs": [
+        {
+          "correctness_passed": true,
+          "goodput_steps_per_sec": 12.297896631733446,
+          "replayed_steps": 0,
+          "restarts": 2,
+          "run_id": "exp4_matrix_20260215_151709_cifar100_resnet18_flate_k50_m4_s1337_failure_blocking",
+          "snapshot_time_sec_total": 0.023079003090970218,
+          "stall_time_sec_total": 11.795908308122307,
+          "wall_clock_time_sec": 130.10354924201965,
+          "write_time_sec_total": 11.607648807112128
+        }
+      ],
+      "snapshot_time_sec_total": {
+        "ci95": 0.0,
+        "mean": 0.023079003090970218,
+        "n": 1,
+        "std": 0.0
+      },
+      "stall_time_sec_total": {
+        "ci95": 0.0,
+        "mean": 11.795908308122307,
+        "n": 1,
+        "std": 0.0
+      },
+      "wall_clock_time_sec": {
+        "ci95": 0.0,
+        "mean": 130.10354924201965,
+        "n": 1,
+        "std": 0.0
+      },
+      "write_time_sec_total": {
+        "ci95": 0.0,
+        "mean": 11.607648807112128,
+        "n": 1,
+        "std": 0.0
+      }
+    },
+    "failure_overlapped": {
+      "correctness": {
+        "all_passed": true,
+        "pass_rate": 1.0
+      },
+      "goodput_steps_per_sec": {
+        "ci95": 0.0,
+        "mean": 12.747096733094018,
+        "n": 1,
+        "std": 0.0
+      },
+      "label": "exp4_matrix_20260215_151709_cifar100_resnet18_flate_k50_m4_failure_overlapped",
+      "num_runs": 1,
+      "replayed_steps": {
+        "ci95": 0.0,
+        "mean": 0.0,
+        "n": 1,
+        "std": 0.0
+      },
+      "restarts": {
+        "ci95": 0.0,
+        "mean": 2.0,
+        "n": 1,
+        "std": 0.0
+      },
+      "run_ids": [
+        "exp4_matrix_20260215_151709_cifar100_resnet18_flate_k50_m4_s1337_failure_overlapped"
+      ],
+      "runs": [
+        {
+          "correctness_passed": true,
+          "goodput_steps_per_sec": 12.747096733094018,
+          "replayed_steps": 0,
+          "restarts": 2,
+          "run_id": "exp4_matrix_20260215_151709_cifar100_resnet18_flate_k50_m4_s1337_failure_overlapped",
+          "snapshot_time_sec_total": 0.020588745013810694,
+          "stall_time_sec_total": 5.101918732980266,
+          "wall_clock_time_sec": 125.51877760887146,
+          "write_time_sec_total": 0.8684961340622976
+        }
+      ],
+      "snapshot_time_sec_total": {
+        "ci95": 0.0,
+        "mean": 0.020588745013810694,
+        "n": 1,
+        "std": 0.0
+      },
+      "stall_time_sec_total": {
+        "ci95": 0.0,
+        "mean": 5.101918732980266,
+        "n": 1,
+        "std": 0.0
+      },
+      "wall_clock_time_sec": {
+        "ci95": 0.0,
+        "mean": 125.51877760887146,
+        "n": 1,
+        "std": 0.0
+      },
+      "write_time_sec_total": {
+        "ci95": 0.0,
+        "mean": 0.8684961340622976,
+        "n": 1,
+        "std": 0.0
+      }
+    },
+    "reference": {
+      "correctness": {
+        "all_passed": true,
+        "pass_rate": 1.0
+      },
+      "goodput_steps_per_sec": {
+        "ci95": 0.0,
+        "mean": 14.565676239624384,
+        "n": 1,
+        "std": 0.0
+      },
+      "label": "exp4_matrix_20260215_151709_cifar100_resnet18_flate_k50_m4_reference",
+      "num_runs": 1,
+      "replayed_steps": {
+        "ci95": 0.0,
+        "mean": 0.0,
+        "n": 1,
+        "std": 0.0
+      },
+      "restarts": {
+        "ci95": 0.0,
+        "mean": 0.0,
+        "n": 1,
+        "std": 0.0
+      },
+      "run_ids": [
+        "exp4_matrix_20260215_151709_cifar100_resnet18_flate_k50_m4_s1337_reference"
+      ],
+      "runs": [
+        {
+          "correctness_passed": true,
+          "goodput_steps_per_sec": 14.565676239624384,
+          "replayed_steps": 0,
+          "restarts": 0,
+          "run_id": "exp4_matrix_20260215_151709_cifar100_resnet18_flate_k50_m4_s1337_reference",
+          "snapshot_time_sec_total": 0.0207861386006698,
+          "stall_time_sec_total": 11.647366649471223,
+          "wall_clock_time_sec": 109.84728574752808,
+          "write_time_sec_total": 11.467937470180914
+        }
+      ],
+      "snapshot_time_sec_total": {
+        "ci95": 0.0,
+        "mean": 0.0207861386006698,
+        "n": 1,
+        "std": 0.0
+      },
+      "stall_time_sec_total": {
+        "ci95": 0.0,
+        "mean": 11.647366649471223,
+        "n": 1,
+        "std": 0.0
+      },
+      "wall_clock_time_sec": {
+        "ci95": 0.0,
+        "mean": 109.84728574752808,
+        "n": 1,
+        "std": 0.0
+      },
+      "write_time_sec_total": {
+        "ci95": 0.0,
+        "mean": 11.467937470180914,
+        "n": 1,
+        "std": 0.0
+      }
+    }
+  }
+}

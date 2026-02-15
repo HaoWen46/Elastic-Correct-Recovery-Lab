@@ -1,0 +1,19 @@
+## Experimental Setup (Draft)
+- Matrix prefix: `exp4_matrix_20260215_151709`
+- Suites: 8 (`2 datasets x 2 models x 2 failure schedules`)
+- Datasets: `cifar10`, `cifar100`
+- Models: `resnet18`, `resnet50`
+- Failure schedules: `base(400,1200)`, `late(800,1400)`
+- Checkpoint config: `every=50`, `max_inflight=4`
+- Distributed config: `nproc=4`
+- Seeds: `1` (`PROFILE=small`)
+- Comparison groups per suite:
+  - Reference: no injected failure
+  - Failure+blocking: injected failures with blocking checkpoint strategy
+  - Failure+overlapped: injected failures with overlapped checkpoint strategy
+- Primary metrics:
+  - Correctness pass rate
+  - Goodput (`steps/sec`) and relative deltas
+  - Restart count and replayed steps
+  - Checkpoint stall/write/snapshot times
+  - Divergence from reference checkpoints and losses
