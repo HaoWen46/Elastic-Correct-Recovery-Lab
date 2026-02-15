@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # Low-quota Exp4 "paperlite" pipeline:
-# - 1 seed
-# - 3 runs: reference, failure+blocking, failure+overlapped
+# - Small/balanced/large tiers
+# - Per-seed 3 runs: reference, failure+blocking, failure+overlapped
 # - correctness/goodput/divergence/aggregate/plots/publishable report
 #
 # Usage:
@@ -15,6 +15,8 @@ set -euo pipefail
 NPROC="${1:-${NPROC:-2}}"
 TARGET_STEPS="${TARGET_STEPS:-1600}"
 SEED="${SEED:-1337}"
+PROFILE="${PROFILE:-balanced}"   # small|balanced|large
+SEEDS_CSV="${SEEDS_CSV:-}"
 FAIL_STEPS="${FAIL_STEPS:-400,1200}"
 CHECKPOINT_EVERY="${CHECKPOINT_EVERY:-50}"
 MAX_INFLIGHT="${MAX_INFLIGHT:-4}"
@@ -22,6 +24,7 @@ MASTER_ADDR="${MASTER_ADDR:-127.0.0.1}"
 MASTER_PORT_BASE="${MASTER_PORT_BASE:-$((30000 + RANDOM % 20000))}"
 
 MODEL_NAME="${MODEL_NAME:-resnet50}"
+DATASET_NAME="${DATASET_NAME:-cifar100}"   # cifar10|cifar100|imagefolder|fake
 PRECISION="${PRECISION:-bf16}"
 GLOBAL_BATCH="${GLOBAL_BATCH:-256}"
 LR="${LR:-0.1}"
@@ -39,6 +42,9 @@ MAX_RESTARTS="${MAX_RESTARTS:-20}"
 MAX_RESTARTS_NO_CKPT="${MAX_RESTARTS_NO_CKPT:-3}"
 RESTART_DELAY_SEC="${RESTART_DELAY_SEC:-1.0}"
 DIVERGENCE_STEPS="${DIVERGENCE_STEPS:-200,400,800,1200,1600}"
+IMAGEFOLDER_ROOT="${IMAGEFOLDER_ROOT:-}"
+IMAGEFOLDER_SPLIT_SUBDIR="${IMAGEFOLDER_SPLIT_SUBDIR:-train}"
+DATASET_NUM_CLASSES="${DATASET_NUM_CLASSES:-10}"  # used by fake/imagefolder
 
 RUN_PREFIX="${RUN_PREFIX:-exp4_paperlite_$(date +%Y%m%d_%H%M%S)}"
 RESULTS_DIR="${RESULTS_DIR:-results/${RUN_PREFIX}}"
@@ -58,6 +64,39 @@ trim() {
 join_csv() {
   local IFS=","
   echo "$*"
+}
+
+resolve_seeds() {
+  if [ -z "${SEEDS_CSV}" ]; then
+    case "${PROFILE}" in
+      small)
+        SEEDS_CSV="${SEED}"
+        ;;
+      balanced)
+        SEEDS_CSV="${SEED},2027"
+        ;;
+      large)
+        SEEDS_CSV="${SEED},2027,4242"
+        ;;
+      *)
+        echo "Unsupported PROFILE=${PROFILE}. Use small|balanced|large." >&2
+        exit 1
+        ;;
+    esac
+  fi
+
+  IFS=',' read -r -a SEEDS_RAW <<< "${SEEDS_CSV}"
+  SEEDS=()
+  for s in "${SEEDS_RAW[@]}"; do
+    s="$(trim "${s}")"
+    [ -n "${s}" ] || continue
+    SEEDS+=("${s}")
+  done
+  if [ "${#SEEDS[@]}" -eq 0 ]; then
+    echo "SEEDS_CSV produced no valid seeds" >&2
+    exit 1
+  fi
+  BASE_SEED="${SEEDS[0]}"
 }
 
 next_port() {
@@ -159,18 +198,100 @@ ensure_cifar100() {
   tar -xzf data/cifar-100-python.tar.gz -C data
 }
 
+ensure_cifar10() {
+  mkdir -p data
+  if [ -d data/cifar-10-batches-py ]; then
+    return
+  fi
+  if [ ! -f data/cifar-10-python.tar.gz ]; then
+    curl -L --fail --retry 3 --retry-delay 2 \
+      -o data/cifar-10-python.tar.gz \
+      https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+  fi
+  tar -xzf data/cifar-10-python.tar.gz -C data
+}
+
+count_imagefolder_samples() {
+  local root="$1"
+  local split="$2"
+  run_py - "${root}" "${split}" <<'PY'
+from pathlib import Path
+import sys
+
+base = Path(sys.argv[1]) / sys.argv[2]
+if not base.is_dir():
+    raise SystemExit(f"missing imagefolder split directory: {base}")
+
+exts = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
+classes = [p for p in base.iterdir() if p.is_dir()]
+if not classes:
+    raise SystemExit(f"no class directories under {base}")
+
+count = 0
+for cls in classes:
+    for fp in cls.rglob("*"):
+        if fp.is_file() and fp.suffix.lower() in exts:
+            count += 1
+
+if count <= 0:
+    raise SystemExit(f"no image files found under {base}")
+
+print(f"{count} {len(classes)}")
+PY
+}
+
+prepare_dataset() {
+  case "${DATASET_NAME}" in
+    cifar100)
+      ensure_cifar100
+      DATASET_ROOT="./data"
+      DATASET_DOWNLOAD="true"
+      DATASET_SIZE="${DATASET_SIZE:-50000}"
+      IMAGE_SIZE="${IMAGE_SIZE:-32}"
+      ;;
+    cifar10)
+      ensure_cifar10
+      DATASET_ROOT="./data"
+      DATASET_DOWNLOAD="true"
+      DATASET_SIZE="${DATASET_SIZE:-50000}"
+      IMAGE_SIZE="${IMAGE_SIZE:-32}"
+      ;;
+    imagefolder)
+      if [ -z "${IMAGEFOLDER_ROOT}" ]; then
+        echo "DATASET_NAME=imagefolder requires IMAGEFOLDER_ROOT" >&2
+        exit 1
+      fi
+      read -r DATASET_SIZE DATASET_NUM_CLASSES < <(count_imagefolder_samples "${IMAGEFOLDER_ROOT}" "${IMAGEFOLDER_SPLIT_SUBDIR}")
+      DATASET_ROOT="${IMAGEFOLDER_ROOT}"
+      DATASET_DOWNLOAD="false"
+      IMAGE_SIZE="${IMAGE_SIZE:-224}"
+      ;;
+    fake)
+      DATASET_ROOT="./data"
+      DATASET_DOWNLOAD="false"
+      DATASET_SIZE="${DATASET_SIZE:-50000}"
+      IMAGE_SIZE="${IMAGE_SIZE:-32}"
+      DATASET_NUM_CLASSES="${DATASET_NUM_CLASSES:-10}"
+      ;;
+    *)
+      echo "Unsupported DATASET_NAME=${DATASET_NAME}. Use cifar10|cifar100|imagefolder|fake." >&2
+      exit 1
+      ;;
+  esac
+}
+
 generate_config() {
   mkdir -p "$(dirname "${CONFIG_PATH}")"
   cat > "${CONFIG_PATH}" <<EOF
-seed: ${SEED}
+seed: ${BASE_SEED}
 dataset:
-  name: cifar100
-  root: "./data"
+  name: ${DATASET_NAME}
+  root: "${DATASET_ROOT}"
   train: true
-  download: true
-  size: 50000
-  image_size: 32
-  split_subdir: "train"
+  download: ${DATASET_DOWNLOAD}
+  size: ${DATASET_SIZE}
+  image_size: ${IMAGE_SIZE}
+  split_subdir: "${IMAGEFOLDER_SPLIT_SUBDIR}"
 training:
   model_name: ${MODEL_NAME}
   precision: ${PRECISION}
@@ -194,12 +315,32 @@ failure:
   enabled: true
   steps: [${FAIL_STEPS}]
 EOF
+  # overwrite resolved dataset fields in a structured way
+  run_py - "${CONFIG_PATH}" "${DATASET_SIZE}" "${DATASET_NAME}" "${DATASET_NUM_CLASSES}" <<'PY'
+from pathlib import Path
+import sys
+import yaml
+
+cfg_path = Path(sys.argv[1])
+size = int(sys.argv[2])
+dataset_name = str(sys.argv[3]).lower()
+num_classes = int(sys.argv[4])
+cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8"))
+dataset = cfg.setdefault("dataset", {})
+dataset["size"] = size
+if dataset_name in {"fake", "imagefolder"}:
+    dataset["num_classes"] = num_classes
+else:
+    dataset.pop("num_classes", None)
+cfg_path.write_text(yaml.safe_dump(cfg, sort_keys=False), encoding="utf-8")
+PY
 }
 
 run_supervisor() {
   local run_id="$1"
   local strategy="$2"
   local disable_failure="$3"
+  local seed="$4"
   local port
   port="$(next_port)"
 
@@ -213,7 +354,7 @@ run_supervisor() {
     --checkpoint-strategy "${strategy}"
     --checkpoint-every "${CHECKPOINT_EVERY}"
     --max-inflight "${MAX_INFLIGHT}"
-    --seed "${SEED}"
+    --seed "${seed}"
     --master-addr "${MASTER_ADDR}"
     --master-port "${port}"
     --max-restarts "${MAX_RESTARTS}"
@@ -227,18 +368,19 @@ run_supervisor() {
     cmd+=(--fail-steps "${FAIL_STEPS}")
   fi
 
-  echo "[RUN] ${run_id} nproc=${NPROC} target=${TARGET_STEPS} strategy=${strategy} fail=$([ "${disable_failure}" = "1" ] && echo none || echo "${FAIL_STEPS}")"
+  echo "[RUN] ${run_id} seed=${seed} nproc=${NPROC} target=${TARGET_STEPS} strategy=${strategy} fail=$([ "${disable_failure}" = "1" ] && echo none || echo "${FAIL_STEPS}")"
   run_py "${cmd[@]}"
 }
 
 run_metrics_for() {
   local run_id="$1"
+  local seed="$2"
   run_py -m ecrl.metrics.correctness \
     --config "${CONFIG_PATH}" \
     --run-id "${run_id}" \
     --results-dir "${RESULTS_DIR}" \
     --target-steps "${TARGET_STEPS}" \
-    --seed "${SEED}"
+    --seed "${seed}"
   run_py -m ecrl.metrics.goodput \
     --run-id "${run_id}" \
     --results-dir "${RESULTS_DIR}" \
@@ -259,46 +401,68 @@ echo "[INFO] Run prefix: ${RUN_PREFIX}"
 echo "[INFO] Results dir: ${RESULTS_DIR}"
 mkdir -p "${RESULTS_DIR}"
 
+resolve_seeds
 ensure_env
 verify_runtime_patches
 enforce_cuda_guard
-ensure_cifar100
+prepare_dataset
 generate_config
 
-REF_RUN="${RUN_PREFIX}_s${SEED}_reference"
-BLK_RUN="${RUN_PREFIX}_s${SEED}_failure_blocking"
-OVL_RUN="${RUN_PREFIX}_s${SEED}_failure_overlapped"
+echo "[INFO] Profile: ${PROFILE}"
+echo "[INFO] Dataset: ${DATASET_NAME} (size=${DATASET_SIZE})"
+echo "[INFO] Model: ${MODEL_NAME}"
+echo "[INFO] Seeds: $(join_csv "${SEEDS[@]}")"
+echo "[INFO] NPROC: ${NPROC}"
 
-run_supervisor "${REF_RUN}" "blocking" "1"
-run_supervisor "${BLK_RUN}" "blocking" "0"
-run_supervisor "${OVL_RUN}" "overlapped" "0"
+declare -a REF_RUNS=()
+declare -a BLK_RUNS=()
+declare -a OVL_RUNS=()
 
-run_metrics_for "${REF_RUN}"
-run_metrics_for "${BLK_RUN}"
-run_metrics_for "${OVL_RUN}"
+for seed in "${SEEDS[@]}"; do
+  REF_RUN="${RUN_PREFIX}_s${seed}_reference"
+  BLK_RUN="${RUN_PREFIX}_s${seed}_failure_blocking"
+  OVL_RUN="${RUN_PREFIX}_s${seed}_failure_overlapped"
 
-run_divergence "${REF_RUN}" "${BLK_RUN}"
-run_divergence "${REF_RUN}" "${OVL_RUN}"
+  REF_RUNS+=("${REF_RUN}")
+  BLK_RUNS+=("${BLK_RUN}")
+  OVL_RUNS+=("${OVL_RUN}")
+
+  run_supervisor "${REF_RUN}" "blocking" "1" "${seed}"
+  run_supervisor "${BLK_RUN}" "blocking" "0" "${seed}"
+  run_supervisor "${OVL_RUN}" "overlapped" "0" "${seed}"
+
+  run_metrics_for "${REF_RUN}" "${seed}"
+  run_metrics_for "${BLK_RUN}" "${seed}"
+  run_metrics_for "${OVL_RUN}" "${seed}"
+
+  run_divergence "${REF_RUN}" "${BLK_RUN}"
+  run_divergence "${REF_RUN}" "${OVL_RUN}"
+done
+
+REF_CSV="$(join_csv "${REF_RUNS[@]}")"
+BLK_CSV="$(join_csv "${BLK_RUNS[@]}")"
+OVL_CSV="$(join_csv "${OVL_RUNS[@]}")"
+ALL_CSV="$(join_csv "${REF_RUNS[@]}" "${BLK_RUNS[@]}" "${OVL_RUNS[@]}")"
 
 REF_LABEL="${RUN_PREFIX}_reference"
 BLK_LABEL="${RUN_PREFIX}_failure_blocking"
 OVL_LABEL="${RUN_PREFIX}_failure_overlapped"
 
-run_py -m ecrl.metrics.aggregate --results-dir "${RESULTS_DIR}" --run-ids "${REF_RUN}" --label "${REF_LABEL}"
-run_py -m ecrl.metrics.aggregate --results-dir "${RESULTS_DIR}" --run-ids "${BLK_RUN}" --label "${BLK_LABEL}"
-run_py -m ecrl.metrics.aggregate --results-dir "${RESULTS_DIR}" --run-ids "${OVL_RUN}" --label "${OVL_LABEL}"
+run_py -m ecrl.metrics.aggregate --results-dir "${RESULTS_DIR}" --run-ids "${REF_CSV}" --label "${REF_LABEL}"
+run_py -m ecrl.metrics.aggregate --results-dir "${RESULTS_DIR}" --run-ids "${BLK_CSV}" --label "${BLK_LABEL}"
+run_py -m ecrl.metrics.aggregate --results-dir "${RESULTS_DIR}" --run-ids "${OVL_CSV}" --label "${OVL_LABEL}"
 
 run_py -m ecrl.metrics.plot \
   --results-dir "${RESULTS_DIR}" \
-  --run-ids "$(join_csv "${REF_RUN}" "${BLK_RUN}" "${OVL_RUN}")" \
+  --run-ids "${ALL_CSV}" \
   --output-prefix "${RUN_PREFIX}_paperlite"
 
 run_py -m ecrl.metrics.report_publishable \
   --results-dir "${RESULTS_DIR}" \
   --output-prefix "${RUN_PREFIX}_publishable" \
-  --reference-runs "${REF_RUN}" \
-  --blocking-runs "${BLK_RUN}" \
-  --overlapped-runs "${OVL_RUN}" \
+  --reference-runs "${REF_CSV}" \
+  --blocking-runs "${BLK_CSV}" \
+  --overlapped-runs "${OVL_CSV}" \
   --aggregate-reference-label "${REF_LABEL}" \
   --aggregate-blocking-label "${BLK_LABEL}" \
   --aggregate-overlapped-label "${OVL_LABEL}"
