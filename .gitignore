@@ -28,3 +28,7 @@ results/*
 # Editor/project files
 .idea/
 .vscode/
+
+# Local paper workspace
+overleaf/
+overleaf.zip
