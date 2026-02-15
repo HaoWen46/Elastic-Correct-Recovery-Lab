@@ -640,6 +640,15 @@ def main() -> None:
                             f"[ECRL][fail-inject] step={global_step} flush_done_sec="
                             f"{time.perf_counter() - flush_start:.3f}"
                         )
+                    if strategy == "overlapped" and rt.rank == 0 and hasattr(checkpointer, "close"):
+                        # Stop rank0's async checkpoint worker so it cannot keep inherited stdio
+                        # FDs open after an injected failure exit.
+                        close_start = time.perf_counter()
+                        checkpointer.close(wait=False)
+                        print(
+                            f"[ECRL][fail-inject] step={global_step} close_done_sec="
+                            f"{time.perf_counter() - close_start:.3f}"
+                        )
                     if rt.rank == 0:
                         print(f"[ECRL][fail-inject] step={global_step} entering synchronized exit barrier")
                     _barrier(rt)

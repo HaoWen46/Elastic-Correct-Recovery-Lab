@@ -193,6 +193,9 @@ src_train = inspect.getsource(ddp_train.main)
 if "all ranks exiting with 137 after synchronized flush" not in src_train:
     print("missing_overlapped_fail_inject_patch")
     sys.exit(1)
+if "close_done_sec" not in src_train:
+    print("missing_overlapped_fail_inject_close_patch")
+    sys.exit(1)
 print("ok")
 PY
   )" || {
