@@ -44,6 +44,7 @@ RESTART_DELAY_SEC="${RESTART_DELAY_SEC:-1.0}"
 DIVERGENCE_STEPS="${DIVERGENCE_STEPS:-200,400,800,1200,1600}"
 START_RESUME_LATEST="${START_RESUME_LATEST:-1}"
 RESUME_SUITE="${RESUME_SUITE:-1}"
+DELETE_CHECKPOINTS_ON_COMPLETE="${DELETE_CHECKPOINTS_ON_COMPLETE:-0}"
 IMAGEFOLDER_ROOT="${IMAGEFOLDER_ROOT:-}"
 IMAGEFOLDER_SPLIT_SUBDIR="${IMAGEFOLDER_SPLIT_SUBDIR:-train}"
 DATASET_NUM_CLASSES="${DATASET_NUM_CLASSES:-10}"  # used by fake/imagefolder
@@ -396,6 +397,25 @@ has_divergence_metric() {
   [ -f "${RESULTS_DIR}/metrics/${cand_run}/divergence_vs_${ref_run}.json" ]
 }
 
+cleanup_checkpoint_dir_for_run() {
+  local run_id="$1"
+  local ckpt_dir="${RESULTS_DIR}/checkpoints/${run_id}"
+  local supervisor_json="${RESULTS_DIR}/logs/${run_id}/supervisor.json"
+
+  [ -d "${ckpt_dir}" ] || return 0
+  if [ ! -f "${supervisor_json}" ]; then
+    echo "[KEEP] ${run_id}: missing supervisor.json, skip checkpoint cleanup"
+    return 0
+  fi
+  if ! grep -q '"status":[[:space:]]*"completed"' "${supervisor_json}"; then
+    echo "[KEEP] ${run_id}: run not completed, skip checkpoint cleanup"
+    return 0
+  fi
+
+  rm -rf "${ckpt_dir}"
+  echo "[CLEANUP] removed checkpoints: ${ckpt_dir}"
+}
+
 run_metrics_for() {
   local run_id="$1"
   local seed="$2"
@@ -439,6 +459,7 @@ echo "[INFO] Seeds: $(join_csv "${SEEDS[@]}")"
 echo "[INFO] NPROC: ${NPROC}"
 echo "[INFO] Resume suite: ${RESUME_SUITE}"
 echo "[INFO] Supervisor start-resume-latest: ${START_RESUME_LATEST}"
+echo "[INFO] Delete checkpoints on complete: ${DELETE_CHECKPOINTS_ON_COMPLETE}"
 
 declare -a REF_RUNS=()
 declare -a BLK_RUNS=()
@@ -524,6 +545,13 @@ run_py -m ecrl.metrics.report_publishable \
   --aggregate-reference-label "${REF_LABEL}" \
   --aggregate-blocking-label "${BLK_LABEL}" \
   --aggregate-overlapped-label "${OVL_LABEL}"
+
+if [ "${DELETE_CHECKPOINTS_ON_COMPLETE}" = "1" ]; then
+  echo "[INFO] Cleaning checkpoints for completed runs..."
+  for run_id in "${REF_RUNS[@]}" "${BLK_RUNS[@]}" "${OVL_RUNS[@]}"; do
+    cleanup_checkpoint_dir_for_run "${run_id}"
+  done
+fi
 
 echo "[DONE] Publishable markdown: ${RESULTS_DIR}/reports/${RUN_PREFIX}_publishable.md"
 echo "[DONE] Publishable json: ${RESULTS_DIR}/reports/${RUN_PREFIX}_publishable.json"

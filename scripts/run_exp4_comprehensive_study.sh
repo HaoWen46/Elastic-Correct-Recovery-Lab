@@ -33,6 +33,7 @@ PYTHON_BIN="${PYTHON_BIN:-.venv/bin/python}"
 VENV_PYTHON="${VENV_PYTHON:-}"
 SETUP_ENV="${SETUP_ENV:-1}"
 REQUIRE_CUDA="${REQUIRE_CUDA:-1}"
+DELETE_CHECKPOINTS_ON_COMPLETE="${DELETE_CHECKPOINTS_ON_COMPLETE:-0}"
 
 MASTER_ADDR="${MASTER_ADDR:-127.0.0.1}"
 MASTER_PORT_BASE="${MASTER_PORT_BASE:-$((30000 + RANDOM % 20000))}"
@@ -427,6 +428,25 @@ run_divergence() {
     --steps "${DIVERGENCE_STEPS}"
 }
 
+cleanup_checkpoint_dir_for_run() {
+  local run_id="$1"
+  local ckpt_dir="${RESULTS_DIR}/checkpoints/${run_id}"
+  local supervisor_json="${RESULTS_DIR}/logs/${run_id}/supervisor.json"
+
+  [ -d "${ckpt_dir}" ] || return 0
+  if [ ! -f "${supervisor_json}" ]; then
+    echo "[KEEP] ${run_id}: missing supervisor.json, skip checkpoint cleanup"
+    return 0
+  fi
+  if ! grep -q '"status":[[:space:]]*"completed"' "${supervisor_json}"; then
+    echo "[KEEP] ${run_id}: run not completed, skip checkpoint cleanup"
+    return 0
+  fi
+
+  rm -rf "${ckpt_dir}"
+  echo "[CLEANUP] removed checkpoints: ${ckpt_dir}"
+}
+
 aggregate_group() {
   local label="$1"
   shift
@@ -615,6 +635,7 @@ echo "[INFO] Dataset: ${DATASET_NAME} (size=${DATASET_SIZE})"
 echo "[INFO] Model: ${MODEL_NAME}"
 echo "[INFO] Global batch: ${GLOBAL_BATCH}"
 echo "[INFO] Config: ${CONFIG_PATH}"
+echo "[INFO] Delete checkpoints on complete: ${DELETE_CHECKPOINTS_ON_COMPLETE}"
 
 declare -a BASE_REF_RUNS=()
 declare -a BASE_BLK_RUNS=()
@@ -780,6 +801,26 @@ plot_group "${RUN_PREFIX}_failsweep" "${FAIL_BLK_RUNS[@]}" "${FAIL_OVL_RUNS[@]}"
 plot_group "${RUN_PREFIX}_elastic" "${ELASTIC_REF_RUNS[@]}" "${ELASTIC_RUNS[@]}"
 
 build_summary
+
+if [ "${DELETE_CHECKPOINTS_ON_COMPLETE}" = "1" ]; then
+  echo "[INFO] Cleaning checkpoints for completed runs..."
+  mapfile -t ALL_RUN_IDS < <(
+    printf '%s\n' \
+      "${BASE_REF_RUNS[@]}" \
+      "${BASE_BLK_RUNS[@]}" \
+      "${BASE_OVL_RUNS[@]}" \
+      "${K_BLK_RUNS[@]}" \
+      "${K_OVL_RUNS[@]}" \
+      "${INFLIGHT_OVL_RUNS[@]}" \
+      "${FAIL_BLK_RUNS[@]}" \
+      "${FAIL_OVL_RUNS[@]}" \
+      "${ELASTIC_REF_RUNS[@]}" \
+      "${ELASTIC_RUNS[@]}" | sed '/^$/d' | sort -u
+  )
+  for run_id in "${ALL_RUN_IDS[@]}"; do
+    cleanup_checkpoint_dir_for_run "${run_id}"
+  done
+fi
 
 echo "[DONE] Comprehensive study completed."
 echo "[DONE] Results: ${RESULTS_DIR}"

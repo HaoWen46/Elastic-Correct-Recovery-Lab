@@ -130,6 +130,7 @@ Key Exp4 paperlite env vars:
 - `PROFILE` (`small|balanced|large`)
 - `RESUME_SUITE` (`1` to skip completed run/metrics/divergence units)
 - `START_RESUME_LATEST` (`1` to start from latest checkpoint if available)
+- `DELETE_CHECKPOINTS_ON_COMPLETE` (`1` to auto-delete run checkpoints after publishable outputs are generated)
 - `REQUIRE_CUDA` (`1` by default)
 
 ### 2) Exp4 Paper Matrix (multiple suites, resume-safe)
@@ -158,6 +159,7 @@ Useful controls:
 - `SKIP_IF_EXISTS=1` skip suite if publishable JSON already exists.
 - `RESUME_MATRIX=1` reuse previous manifest-completed suites.
 - `START_RESUME_LATEST=1` pass resume-latest behavior into each suite.
+- `DELETE_CHECKPOINTS_ON_COMPLETE=1` aggressively free disk after each completed suite.
 - `CONTINUE_ON_ERROR=1` continue matrix after failures.
 - `DRY_RUN=1` generate manifest plan without executing suites.
 
