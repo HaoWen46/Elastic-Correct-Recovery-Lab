@@ -21,6 +21,7 @@ dist/
 # Runtime outputs
 results/*
 !results/.gitkeep
+!results/results_exp4/
 
 # Local datasets
 /data/

@@ -1,99 +1,90 @@
-# ECRL: Elastic & Correct Recovery Lab (DDP)
+# ECRL: Elastic and Correct Recovery Lab (DDP)
 
-ECRL is a reproducible evaluation framework for distributed training recovery focused on:
+ECRL is a reproducible systems-evaluation framework for failure recovery in PyTorch DDP training.
 
-1. Correctness of restart semantics under failures and elastic world-size changes.
-2. Goodput under failures (useful progress accounting for replay).
-3. Elastic resume (`N -> M`) with constant global batch and preserved data-progress correctness.
+Current focus is the Exp4 matrix workflow:
+- run many controlled failure-recovery suites,
+- compare `blocking` vs `overlapped` checkpointing,
+- aggregate publishable metrics and plots.
 
-This repository is an evaluation + semantics project for DDP Data Parallel training.
+This repository is a recovery-semantics and measurement project, not a new checkpointing algorithm.
 
-## Scope and Non-Negotiable Invariants
+## What ECRL Guarantees
 
-- Python `3.11.2` only.
-- Virtual environment required for all Python work.
-- DDP Data Parallel only (no FSDP, no GPU/OS checkpoint-restart).
-- `GLOBAL_BATCH` is constant across all runs and resumes.
-- Runtime assertion: `GLOBAL_BATCH % world_size == 0`.
+ECRL enforces the following runtime invariants:
+
+- DDP data-parallel training only.
+- Constant global batch across fresh runs and resumes.
+- Runtime divisibility check: `global_batch % world_size == 0`.
 - `LOCAL_BATCH = GLOBAL_BATCH // world_size`.
-- DataLoader uses `num_workers=0`, `drop_last=True`.
-- Epoch geometry is fixed by definition:
-  - `D = len(dataset)`
-  - `steps_per_epoch = floor(D / GLOBAL_BATCH)`
+- Deterministic epoch geometry:
+  - `steps_per_epoch = floor(dataset_size / GLOBAL_BATCH)`
   - `epoch_samples = steps_per_epoch * GLOBAL_BATCH`
-- Epoch progression is driven by explicit `for step_in_epoch in range(steps_per_epoch)` loops.
 - Rank-0-only checkpoint writes.
-- Atomic checkpoints: temp file -> `fsync/close` -> `rename` -> pointer update (`latest.json`).
-- Checkpoint barriers at capture boundary.
-- Failure injection only at step boundaries, initiated by rank 0.
-- Overlapped checkpointing uses a background **process** for filesystem I/O only (no distributed APIs).
+- Atomic checkpoint publication (`tmp -> fsync -> rename -> latest.json`).
+- Failure injection only at synchronized step boundaries.
+- Overlapped checkpoint writer performs filesystem I/O only (no distributed ops in worker).
 
-## Setup
+Correctness criterion is strict data-progress equivalence (no duplicate/missing/extra sample semantics per epoch window).
+
+## Environment
+
+Recommended:
+
+- Linux + CUDA GPUs for main experiments.
+- Python 3.11.x.
+- `uv` for environment management.
+
+Basic setup:
 
 ```bash
-uv venv --python 3.11.2 .venv
+uv venv --python 3.11 .venv
 source .venv/bin/activate
-uv pip install -r requirements.txt
+uv pip install --python .venv/bin/python -r requirements.txt
 ```
 
-This project uses an `uv`-managed virtual environment (`.venv`) for all Python work.
-Experiment scripts auto-download/extract CIFAR10/CIFAR100 into `./data` if missing.
+Notes:
+
+- Exp4 scripts auto-create `.venv` if missing; legacy Exp1/2/3 scripts expect it to exist.
+- CIFAR archives are auto-fetched by scripts when needed (can be slow/blocked on some networks).
 
 ## Repository Layout
 
 ```text
 ecrl/
-  README.md
-  requirements.txt
+  ecrl/
+    ckpt/                  # blocking + overlapped checkpoint implementations
+    data/                  # dataset wrappers returning (x, y, sample_id)
+    metrics/               # correctness/goodput/divergence/aggregate/plot/report
+    orchestration/         # restart supervisor
+    sampler/               # resumable deterministic sampler
+    statepack/             # checkpoint payload + RNG state handling
+    train/                 # DDP train entrypoint
   configs/
     exp1_failure.yaml
     exp2_elastic.yaml
-    exp3_publishable.yaml
-    exp3_publishable_1gpu.yaml
-    exp3_publishable_4gpu.yaml
-  ecrl/
-    data/cifar_with_ids.py
-    data/datasets_with_ids.py
-    sampler/resumable_sampler.py
-    statepack/statepack.py
-    statepack/rng.py
-    ckpt/atomic_writer.py
-    ckpt/blocking.py
-    ckpt/overlapped.py
-    train/ddp_train.py
-    orchestration/supervisor.py
-    metrics/correctness.py
-    metrics/goodput.py
-    metrics/divergence.py
-    metrics/plot.py
-    metrics/aggregate.py
-    metrics/report_publishable.py
+    exp3_publishable*.yaml
   scripts/
     run_exp1_failure.sh
     run_exp2_elastic.sh
     run_exp3_publishable.sh
-  results/
+    run_exp4_paperlite.sh
+    run_exp4_paper_matrix.sh
+    run_exp4_comprehensive_study.sh
+  tests/
+  results/                 # ignored by git (runtime outputs)
 ```
 
-## Training and Recovery Semantics
+## Supported Dataset and Model Names
 
-### Dataset with IDs
-
-Supported dataset wrappers return `(x, y, sample_id)` where `sample_id` is dataset index:
-
-- `CIFAR10WithIDs`
-- `CIFAR100WithIDs`
-- `ImageFolderWithIDs`
-- `FakeDataWithIDs`
-
-Supported `dataset.name` values:
+Dataset names (`dataset.name`):
 
 - `cifar10`
 - `cifar100`
-- `imagefolder` (reads `<root>/<split_subdir>`)
+- `imagefolder`
 - `fake`
 
-Supported `training.model_name` values:
+Model names (`training.model_name`):
 
 - `small_cnn`
 - `resnet18`
@@ -102,177 +93,215 @@ Supported `training.model_name` values:
 - `efficientnet_b0`
 - `mobilenet_v3_large`
 
-Recommended scaling knobs for larger runs:
+Precision (`training.precision`):
 
-- `training.precision`: `fp32`, `bf16`, `fp16` (CUDA only for bf16/fp16)
-- `training.scheduler`: `none`, `cosine`
-- `training.use_augmentation`: `true`/`false`
-- `training.max_grad_norm`: gradient clipping threshold (`0` disables)
+- `fp32`
+- `bf16`
+- `fp16`
 
-### Resumable Sampler
+## Recommended Workflows
 
-`ResumableGlobalBatchSampler` implements deterministic per-epoch permutation seeded by `(seed, epoch)`, fixed epoch truncation, and per-rank contiguous slicing of each global batch window. It stores and restores:
+### 1) Exp4 Paperlite (single suite, low quota)
 
-- `epoch`
-- `cursor_step`
-- `seed`
+Good default for quick, resume-safe runs with publishable JSON/MD output.
 
-Resume and elastic `N -> M` reuse the same global windows with runtime `world_size` slicing.
-
-### StatePack
-
-Captured checkpoint payload includes:
-
-- model, optimizer, optional scheduler state
-- sampler state
-- step state (`epoch`, `global_step`, `cursor_step`)
-- RNG state (Python, NumPy, torch CPU, torch CUDA-all if available)
-
-### Checkpoint Strategies
-
-- Blocking periodic (`barrier -> capture -> rank0 atomic write -> barrier`)
-- Overlapped periodic (`barrier -> capture -> rank0 enqueue -> barrier`) with bounded inflight writes and backpressure.
-
-### Failure Injection
-
-Configured global steps cause rank 0 to exit with code `137` at a post-step boundary after checkpoint boundary synchronization.
-
-### Supervisor
-
-The supervisor relaunches training via `python -m torch.distributed.run`, uses `latest.json` for resume, and continues until `target_steps` is reached.
-
-## Logging
-
-Per rank JSONL logs:
-
-```text
-results/logs/<run_id>/rank{rank}.jsonl
+```bash
+scripts/run_exp4_paperlite.sh 4
 ```
 
-Per-step record fields:
+Common overrides:
 
-- `time`, `run_id`, `rank`, `world_size`, `epoch`, `global_step`, `cursor_step`,
-- `loss`, `sample_ids_hash`, `sample_ids_count`
+```bash
+PROFILE=small \
+DATASET_NAME=cifar10 \
+MODEL_NAME=resnet18 \
+SEEDS_CSV=1337 \
+TARGET_STEPS=800 \
+FAIL_STEPS=200,600 \
+CHECKPOINT_EVERY=50 \
+MAX_INFLIGHT=4 \
+scripts/run_exp4_paperlite.sh 1
+```
 
-Rank 0 debug IDs every `DEBUG_EVERY` steps:
+Key Exp4 paperlite env vars:
 
-- `results/logs/<run_id>/debug_rank0_ids.jsonl`
+- `RUN_PREFIX` (default `exp4_paperlite_<timestamp>`)
+- `RESULTS_DIR` (default `results/<RUN_PREFIX>`)
+- `PROFILE` (`small|balanced|large`)
+- `RESUME_SUITE` (`1` to skip completed run/metrics/divergence units)
+- `START_RESUME_LATEST` (`1` to start from latest checkpoint if available)
+- `REQUIRE_CUDA` (`1` by default)
 
-Checkpoint timing (rank 0):
+### 2) Exp4 Paper Matrix (multiple suites, resume-safe)
 
-- `results/logs/<run_id>/checkpoint_rank0.jsonl`
+This is the main matrix orchestrator used for report-style analysis.
 
-## Metrics
+```bash
+scripts/run_exp4_paper_matrix.sh 4
+```
 
-- `correctness.py`: deterministic data-progress checker using reconstructed expected windows and logged hashes.
-- `goodput.py`: `goodput = useful_steps / wall_clock_time`, plus replay/restart and checkpoint stall breakdown.
-- `divergence.py`: model distance at fixed steps (`200, 400, 800`) and loss divergence stats.
-- `plot.py`: loss curves and goodput comparison plots.
-- `aggregate.py`: multi-run aggregation (mean/std/95% CI) for publishable reporting.
+Typical matrix command:
 
-## Experiments
+```bash
+PROFILE=small \
+MODELS_CSV="resnet18,resnet50" \
+DATASETS_CSV="cifar10,cifar100" \
+FAILURE_SPECS="base:400,1200;late:800,1400" \
+CHECKPOINT_EVERY_CSV="50" \
+MAX_INFLIGHT_CSV="4" \
+MATRIX_PREFIX=exp4_matrix_$(date +%Y%m%d_%H%M%S) \
+scripts/run_exp4_paper_matrix.sh 4
+```
 
-### Exp1: Failure Recovery
+Useful controls:
 
-Runs:
+- `SKIP_IF_EXISTS=1` skip suite if publishable JSON already exists.
+- `RESUME_MATRIX=1` reuse previous manifest-completed suites.
+- `START_RESUME_LATEST=1` pass resume-latest behavior into each suite.
+- `CONTINUE_ON_ERROR=1` continue matrix after failures.
+- `DRY_RUN=1` generate manifest plan without executing suites.
 
-- reference
-- failure + blocking
-- failure + overlapped
+Nohup example:
 
-Command:
+```bash
+mkdir -p results
+ts=$(date +%Y%m%d_%H%M%S)
+nohup env PROFILE=small FAILURE_SPECS='base:400,1200;late:800,1400' \
+  MATRIX_PREFIX="exp4_matrix_${ts}" \
+  bash scripts/run_exp4_paper_matrix.sh 4 \
+  > "results/exp4_matrix_nohup_${ts}.log" 2>&1 &
+```
+
+### 3) Exp4 Comprehensive Study (high budget)
+
+Large orchestrator with baseline, checkpoint-frequency sweep, inflight sweep, failure-schedule sweep, and elastic `N->M`.
+
+```bash
+scripts/run_exp4_comprehensive_study.sh 4
+```
+
+This runner can consume substantial GPU hours. Use only when you have sufficient quota.
+
+### 4) Legacy scripts
+
+Exp1:
 
 ```bash
 scripts/run_exp1_failure.sh 4
 ```
 
-Use `2` instead of `4` if resources are limited.
-Common overrides:
-
-```bash
-TARGET=300 FAIL_STEPS=120,240 K=25 SEED=1337 scripts/run_exp1_failure.sh 2
-```
-
-### Exp2: Elastic Resume
-
-Runs:
-
-- reference (`N=4`)
-- elastic (`4 -> 2`) via phase A then phase B resume
-
-Command:
+Exp2:
 
 ```bash
 scripts/run_exp2_elastic.sh 4 2
 ```
 
-Common overrides:
-
-```bash
-TARGET_FINAL=400 PHASE_A_TARGET=200 K=25 SEED=1337 scripts/run_exp2_elastic.sh 2 1
-```
-
-### Exp3: Publishable-Mode (Larger Model + Dataset + Multi-Seed)
-
-Defaults:
-
-- Dataset: CIFAR100
-- Model: ResNet34
-- Seeds: `1337,2027,4242`
-- Precision: `bf16` (falls back to `fp32` on CPU/MPS)
-
-Command:
+Exp3:
 
 ```bash
 scripts/run_exp3_publishable.sh 4
 ```
 
-Alternate presets:
+## Artifact Map
+
+Per-run artifacts are under each suite `results_dir`.
+
+Core files:
+
+- Checkpoints: `results/.../checkpoints/<run_id>/step_XXXXXXXX.pt`
+- Latest pointer: `results/.../checkpoints/<run_id>/latest.json`
+- Rank logs: `results/.../logs/<run_id>/rank*.jsonl`
+- Supervisor state:
+  - `results/.../logs/<run_id>/supervisor_attempts.jsonl`
+  - `results/.../logs/<run_id>/supervisor.json`
+- Checkpoint timing (rank 0): `results/.../logs/<run_id>/checkpoint_rank0.jsonl`
+- Metrics per run:
+  - `results/.../metrics/<run_id>/correctness.json`
+  - `results/.../metrics/<run_id>/goodput.json`
+  - `results/.../metrics/<run_id>/divergence_vs_<reference>.json`
+- Aggregate metrics: `results/.../metrics/_aggregate/*.json`
+- Plots: `results/.../plots/*.png` (and optional PDF from `--save-pdf`)
+- Publishable report (paperlite/exp3):
+  - `results/.../reports/<prefix>_publishable.md`
+  - `results/.../reports/<prefix>_publishable.json`
+
+Exp4 matrix-level files (at `RESULTS_ROOT`, usually `results/`):
+
+- `<MATRIX_PREFIX>_manifest.csv`
+- `<MATRIX_PREFIX>_manifest.md`
+- `<MATRIX_PREFIX>_summary.csv`
+- `<MATRIX_PREFIX>_summary.md`
+
+## Resume and Progress Behavior
+
+- Supervisor restarts after injected failures until target steps are complete.
+- Expected in failure runs:
+  - attempt 1 ends near first fail step,
+  - attempt 2 resumes from latest checkpoint,
+  - additional attempts continue until target completion.
+- `supervisor_attempts.jsonl` is the source of truth for restart progression.
+
+When verifying progress quickly:
 
 ```bash
-CONFIG=configs/exp3_publishable_1gpu.yaml scripts/run_exp3_publishable.sh 1
-CONFIG=configs/exp3_publishable_4gpu.yaml scripts/run_exp3_publishable.sh 4
+tail -n 20 results/<run>/logs/<run_id>/supervisor_attempts.jsonl
+tail -n 5  results/<run>/logs/<run_id>/checkpoint_rank0.jsonl
+tail -n 1  results/<run>/logs/<run_id>/rank0.jsonl
 ```
 
-Common overrides:
+## Cleanup
+
+After a run is fully completed and reports are generated, checkpoints are usually safe to remove.
+
+Delete checkpoints for one run root:
 
 ```bash
-SEEDS_CSV=1337,2027 TARGET=800 CHECKPOINT_EVERY=40 MAX_INFLIGHT=4 scripts/run_exp3_publishable.sh 4
+find results/<run_prefix> -type d -name checkpoints -prune -exec rm -rf {} +
 ```
 
-Aggregate outputs:
+Or only remove `.pt` files while keeping `latest.json` directories:
 
-- `results/metrics/_aggregate/exp3_reference.json`
-- `results/metrics/_aggregate/exp3_failure_blocking.json`
-- `results/metrics/_aggregate/exp3_failure_overlapped.json`
-- `results/reports/exp3_publishable.md`
-- `results/reports/exp3_publishable.json`
+```bash
+find results/<run_prefix>/checkpoints -type f -name 'step_*.pt' -delete
+```
 
-Budget notes:
+## Troubleshooting
 
-- Single consumer GPU / laptop: use `NPROC=1..2`, keep `model_name=resnet18`, reduce `TARGET`.
-- 24GB+ GPU: `resnet34` and `global_batch=256` are typically viable.
-- Multi-GPU server: use `NPROC=4` and keep global batch fixed as required.
+`address already in use` (`EADDRINUSE`):
 
-## Typical Outputs
+- Another run is occupying `master_port`.
+- Set a different `MASTER_PORT_BASE` or stop stale processes.
 
-- Checkpoints: `results/checkpoints/<run_id>/step_XXXXXXXX.pt`
-- Latest pointer: `results/checkpoints/<run_id>/latest.json`
-- Metrics: `results/metrics/<run_id>/...`
-- Plots (Exp1): `results/plots/loss_curves_exp1.png`, `results/plots/goodput_exp1.png`
-- Plots (Exp2): `results/plots/loss_curves_exp2.png`, `results/plots/goodput_exp2.png`
-- Final summary: `results/final_summary.md`
+No progress after `attempt_start`:
 
-## Validation
+- Check `rank0.jsonl` growth and `checkpoint_rank0.jsonl`.
+- If `global_step` keeps advancing, training is active even if attempt log is quiet.
 
-Run unit tests (inside the venv):
+`TypeError: RNG state must be a torch.ByteTensor`:
+
+- Indicates old code/runtime mismatch.
+- Sync latest repo and rerun (scripts perform runtime patch checks in Exp4 runners).
+
+CIFAR download hangs/fails:
+
+- Network/firewall issue to Toronto dataset host.
+- Pre-download archives into `data/` manually, then rerun.
+
+GPU overuse/quota pressure:
+
+- Reduce `NPROC`, `TARGET_STEPS`, model size, seed count, and matrix breadth.
+- Prefer `run_exp4_paperlite.sh` or `PROFILE=small` matrix runs first.
+
+## Tests
+
+Run unit tests:
 
 ```bash
 source .venv/bin/activate
 uv run --python .venv/bin/python -m unittest discover -s tests -v
 ```
 
-## Notes
+## Local Paper Artifacts
 
-- Overlapped checkpoint worker performs filesystem writes only and does not call `torch.distributed` APIs.
-- Correctness checker uses expected-window reconstruction and hash validation; debug raw IDs are available for diagnosis.
+- `overleaf/` and `overleaf.zip` are intentionally git-ignored local assets.
+- Keep final deliverables under `reports/final/` (recommended) if you want stable local report paths.
