@@ -28,6 +28,8 @@ DRY_RUN="${DRY_RUN:-0}"
 CONTINUE_ON_ERROR="${CONTINUE_ON_ERROR:-0}"
 SETUP_ENV_FIRST="${SETUP_ENV_FIRST:-1}"
 SKIP_IF_EXISTS="${SKIP_IF_EXISTS:-1}"
+RESUME_MATRIX="${RESUME_MATRIX:-1}"
+START_RESUME_LATEST="${START_RESUME_LATEST:-1}"
 MASTER_PORT_BASE="${MASTER_PORT_BASE:-$((30000 + RANDOM % 20000))}"
 PYTHON_MANIFEST_BIN="${PYTHON_MANIFEST_BIN:-python3}"
 
@@ -138,6 +140,8 @@ echo "[INFO] FAILURE_SPECS: ${FAILURE_SPECS}"
 echo "[INFO] CHECKPOINT_EVERY_CSV: ${CHECKPOINT_EVERY_CSV}"
 echo "[INFO] MAX_INFLIGHT_CSV: ${MAX_INFLIGHT_CSV}"
 echo "[INFO] SKIP_IF_EXISTS: ${SKIP_IF_EXISTS}"
+echo "[INFO] RESUME_MATRIX: ${RESUME_MATRIX}"
+echo "[INFO] START_RESUME_LATEST: ${START_RESUME_LATEST}"
 echo "[INFO] DRY_RUN: ${DRY_RUN}"
 if [ -n "${TARGET_STEPS}" ]; then
   echo "[INFO] TARGET_STEPS override: ${TARGET_STEPS}"
@@ -145,6 +149,35 @@ fi
 
 planned_total=$(( ${#DATASETS[@]} * ${#MODELS[@]} * ${#FAIL_LABELS[@]} * ${#CHECKPOINT_VALUES[@]} * ${#INFLIGHT_VALUES[@]} ))
 echo "[INFO] Planned suites: ${planned_total}"
+
+PREV_COMPLETED_LIST=""
+if [ "${RESUME_MATRIX}" = "1" ] && [ -f "${MANIFEST_CSV}" ]; then
+  PREV_COMPLETED_LIST="$("${PYTHON_MANIFEST_BIN}" - "${MANIFEST_CSV}" <<'PY'
+import csv
+from pathlib import Path
+import sys
+
+manifest = Path(sys.argv[1])
+if not manifest.exists():
+    raise SystemExit(0)
+
+rows = list(csv.DictReader(manifest.open("r", encoding="utf-8")))
+latest = {}
+for row in rows:
+    rp = row.get("run_prefix", "")
+    if rp:
+        latest[rp] = row
+
+for rp, row in latest.items():
+    status = str(row.get("status", ""))
+    publishable_json = row.get("publishable_json", "")
+    if status.startswith("completed") and publishable_json and Path(publishable_json).exists():
+        print(rp)
+PY
+)"
+  prev_completed_count="$(printf '%s\n' "${PREV_COMPLETED_LIST}" | sed '/^$/d' | wc -l | tr -d ' ')"
+  echo "[INFO] Resume map from previous manifest: ${prev_completed_count} completed suites"
+fi
 
 echo "matrix_prefix,run_prefix,results_dir,dataset,model,failure_label,failure_steps,checkpoint_every,max_inflight,status,publishable_md,publishable_json" > "${MANIFEST_CSV}"
 
@@ -168,11 +201,14 @@ for dataset in "${DATASETS[@]}"; do
 
           echo "[MATRIX ${suite_idx}/${planned_total}] run_prefix=${run_prefix} dataset=${dataset} model=${model} fail=${fail_steps} k=${checkpoint_every} inflight=${max_inflight} port_base=${current_port_base}"
 
-          if [ "${DRY_RUN}" = "1" ]; then
+          if [ "${RESUME_MATRIX}" = "1" ] && printf '%s\n' "${PREV_COMPLETED_LIST}" | grep -Fxq "${run_prefix}"; then
+            status="completed_prev"
+            echo "[SKIP] previously completed suite: ${run_prefix}"
+          elif [ "${DRY_RUN}" = "1" ]; then
             status="planned"
-          elif [ -d "${run_dir}" ] && [ "$(ls -A "${run_dir}" 2>/dev/null | wc -l)" -gt 0 ] && [ "${SKIP_IF_EXISTS}" = "1" ]; then
+          elif [ "${SKIP_IF_EXISTS}" = "1" ] && [ -f "${pub_json}" ]; then
             status="skipped_exists"
-            echo "[WARN] skipping existing run dir: ${run_dir}"
+            echo "[WARN] skipping existing completed suite output: ${pub_json}"
           else
             set +e
             RUN_PREFIX="${run_prefix}" \
@@ -185,6 +221,8 @@ for dataset in "${DATASETS[@]}"; do
             FAIL_STEPS="${fail_steps}" \
             CHECKPOINT_EVERY="${checkpoint_every}" \
             MAX_INFLIGHT="${max_inflight}" \
+            RESUME_SUITE="1" \
+            START_RESUME_LATEST="${START_RESUME_LATEST}" \
             TARGET_STEPS="${TARGET_STEPS}" \
             MASTER_PORT_BASE="${current_port_base}" \
             SETUP_ENV="${setup_env_value}" \

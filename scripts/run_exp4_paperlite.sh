@@ -42,6 +42,8 @@ MAX_RESTARTS="${MAX_RESTARTS:-20}"
 MAX_RESTARTS_NO_CKPT="${MAX_RESTARTS_NO_CKPT:-3}"
 RESTART_DELAY_SEC="${RESTART_DELAY_SEC:-1.0}"
 DIVERGENCE_STEPS="${DIVERGENCE_STEPS:-200,400,800,1200,1600}"
+START_RESUME_LATEST="${START_RESUME_LATEST:-1}"
+RESUME_SUITE="${RESUME_SUITE:-1}"
 IMAGEFOLDER_ROOT="${IMAGEFOLDER_ROOT:-}"
 IMAGEFOLDER_SPLIT_SUBDIR="${IMAGEFOLDER_SPLIT_SUBDIR:-train}"
 DATASET_NUM_CLASSES="${DATASET_NUM_CLASSES:-10}"  # used by fake/imagefolder
@@ -362,6 +364,10 @@ run_supervisor() {
     --restart-delay-sec "${RESTART_DELAY_SEC}"
   )
 
+  if [ "${START_RESUME_LATEST}" = "1" ]; then
+    cmd+=(--start-resume-latest)
+  fi
+
   if [ "${disable_failure}" = "1" ]; then
     cmd+=(--disable-failure)
   else
@@ -370,6 +376,24 @@ run_supervisor() {
 
   echo "[RUN] ${run_id} seed=${seed} nproc=${NPROC} target=${TARGET_STEPS} strategy=${strategy} fail=$([ "${disable_failure}" = "1" ] && echo none || echo "${FAIL_STEPS}")"
   run_py "${cmd[@]}"
+}
+
+is_run_completed() {
+  local run_id="$1"
+  local path="${RESULTS_DIR}/logs/${run_id}/supervisor.json"
+  [ -f "${path}" ] || return 1
+  grep -q '"status":[[:space:]]*"completed"' "${path}"
+}
+
+has_run_metrics() {
+  local run_id="$1"
+  [ -f "${RESULTS_DIR}/metrics/${run_id}/correctness.json" ] && [ -f "${RESULTS_DIR}/metrics/${run_id}/goodput.json" ]
+}
+
+has_divergence_metric() {
+  local ref_run="$1"
+  local cand_run="$2"
+  [ -f "${RESULTS_DIR}/metrics/${cand_run}/divergence_vs_${ref_run}.json" ]
 }
 
 run_metrics_for() {
@@ -413,6 +437,8 @@ echo "[INFO] Dataset: ${DATASET_NAME} (size=${DATASET_SIZE})"
 echo "[INFO] Model: ${MODEL_NAME}"
 echo "[INFO] Seeds: $(join_csv "${SEEDS[@]}")"
 echo "[INFO] NPROC: ${NPROC}"
+echo "[INFO] Resume suite: ${RESUME_SUITE}"
+echo "[INFO] Supervisor start-resume-latest: ${START_RESUME_LATEST}"
 
 declare -a REF_RUNS=()
 declare -a BLK_RUNS=()
@@ -427,16 +453,48 @@ for seed in "${SEEDS[@]}"; do
   BLK_RUNS+=("${BLK_RUN}")
   OVL_RUNS+=("${OVL_RUN}")
 
-  run_supervisor "${REF_RUN}" "blocking" "1" "${seed}"
-  run_supervisor "${BLK_RUN}" "blocking" "0" "${seed}"
-  run_supervisor "${OVL_RUN}" "overlapped" "0" "${seed}"
+  if [ "${RESUME_SUITE}" = "1" ] && is_run_completed "${REF_RUN}"; then
+    echo "[SKIP] completed run: ${REF_RUN}"
+  else
+    run_supervisor "${REF_RUN}" "blocking" "1" "${seed}"
+  fi
+  if [ "${RESUME_SUITE}" = "1" ] && is_run_completed "${BLK_RUN}"; then
+    echo "[SKIP] completed run: ${BLK_RUN}"
+  else
+    run_supervisor "${BLK_RUN}" "blocking" "0" "${seed}"
+  fi
+  if [ "${RESUME_SUITE}" = "1" ] && is_run_completed "${OVL_RUN}"; then
+    echo "[SKIP] completed run: ${OVL_RUN}"
+  else
+    run_supervisor "${OVL_RUN}" "overlapped" "0" "${seed}"
+  fi
 
-  run_metrics_for "${REF_RUN}" "${seed}"
-  run_metrics_for "${BLK_RUN}" "${seed}"
-  run_metrics_for "${OVL_RUN}" "${seed}"
+  if [ "${RESUME_SUITE}" = "1" ] && has_run_metrics "${REF_RUN}"; then
+    echo "[SKIP] metrics exist: ${REF_RUN}"
+  else
+    run_metrics_for "${REF_RUN}" "${seed}"
+  fi
+  if [ "${RESUME_SUITE}" = "1" ] && has_run_metrics "${BLK_RUN}"; then
+    echo "[SKIP] metrics exist: ${BLK_RUN}"
+  else
+    run_metrics_for "${BLK_RUN}" "${seed}"
+  fi
+  if [ "${RESUME_SUITE}" = "1" ] && has_run_metrics "${OVL_RUN}"; then
+    echo "[SKIP] metrics exist: ${OVL_RUN}"
+  else
+    run_metrics_for "${OVL_RUN}" "${seed}"
+  fi
 
-  run_divergence "${REF_RUN}" "${BLK_RUN}"
-  run_divergence "${REF_RUN}" "${OVL_RUN}"
+  if [ "${RESUME_SUITE}" = "1" ] && has_divergence_metric "${REF_RUN}" "${BLK_RUN}"; then
+    echo "[SKIP] divergence exists: ${BLK_RUN} vs ${REF_RUN}"
+  else
+    run_divergence "${REF_RUN}" "${BLK_RUN}"
+  fi
+  if [ "${RESUME_SUITE}" = "1" ] && has_divergence_metric "${REF_RUN}" "${OVL_RUN}"; then
+    echo "[SKIP] divergence exists: ${OVL_RUN} vs ${REF_RUN}"
+  else
+    run_divergence "${REF_RUN}" "${OVL_RUN}"
+  fi
 done
 
 REF_CSV="$(join_csv "${REF_RUNS[@]}")"
