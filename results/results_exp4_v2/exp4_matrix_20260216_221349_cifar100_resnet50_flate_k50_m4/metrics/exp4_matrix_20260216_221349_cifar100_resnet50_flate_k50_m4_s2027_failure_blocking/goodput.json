@@ -1,0 +1,27 @@
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 0.0,
+    "enqueue_latency_sec_total": 0.0,
+    "num_events": 32,
+    "snapshot_time_sec_total": 0.038674052339047194,
+    "stall_time_sec_total": 23.72320666303858,
+    "write_time_sec_total": 23.645930183120072
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 8.485380615724788,
+  "replayed_steps": 0,
+  "restarts": 2,
+  "run_id": "exp4_matrix_20260216_221349_cifar100_resnet50_flate_k50_m4_s2027_failure_blocking",
+  "supervisor": {
+    "attempts": 3,
+    "duration_sec": 200.26991534233093,
+    "restarts": 2,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771364282.9165387
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 188.55960297584534
+}

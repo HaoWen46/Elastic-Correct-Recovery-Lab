@@ -1,0 +1,64 @@
+{
+  "epochs": {
+    "0": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "1": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "2": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "3": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "4": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "5": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "6": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "7": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 195
+    },
+    "8": {
+      "duplicates": 0,
+      "extra": 0,
+      "missing": 0,
+      "steps": 40
+    }
+  },
+  "failures": [],
+  "global_batch": 256,
+  "num_failures": 0,
+  "passed": true,
+  "run_id": "exp4_matrix_20260216_221349_cifar100_resnet18_flate_k50_m4_s2027_failure_overlapped",
+  "steps_per_epoch": 195
+}

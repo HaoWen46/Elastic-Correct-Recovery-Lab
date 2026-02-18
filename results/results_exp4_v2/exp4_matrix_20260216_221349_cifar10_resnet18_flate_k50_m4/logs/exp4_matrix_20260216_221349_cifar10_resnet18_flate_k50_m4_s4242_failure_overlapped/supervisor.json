@@ -1,0 +1,10 @@
+{
+  "attempts": 3,
+  "duration_sec": 148.01648569107056,
+  "restarts": 2,
+  "restarts_without_checkpoint_streak": 0,
+  "restarts_without_checkpoint_total": 0,
+  "status": "completed",
+  "target_steps": 1600,
+  "time": 1771253999.8965056
+}

@@ -1,0 +1,27 @@
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 0.0,
+    "enqueue_latency_sec_total": 0.0,
+    "num_events": 32,
+    "snapshot_time_sec_total": 0.023316763807088137,
+    "stall_time_sec_total": 13.100480759283528,
+    "write_time_sec_total": 12.945834941230714
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 11.825940739685377,
+  "replayed_steps": 0,
+  "restarts": 2,
+  "run_id": "exp4_matrix_20260216_221349_cifar100_resnet18_fbase_k50_m4_s1337_failure_blocking",
+  "supervisor": {
+    "attempts": 3,
+    "duration_sec": 145.86412692070007,
+    "restarts": 2,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771262920.5284498
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 135.29579043388367
+}

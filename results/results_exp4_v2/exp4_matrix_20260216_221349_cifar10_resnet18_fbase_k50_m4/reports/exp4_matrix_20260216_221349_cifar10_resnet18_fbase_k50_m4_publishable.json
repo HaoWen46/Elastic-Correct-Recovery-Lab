@@ -1,0 +1,346 @@
+{
+  "divergence": {
+    "failure_blocking": {
+      "l2_by_step": {
+        "1200": {
+          "mean": 281.7546172037916,
+          "n": 3,
+          "std": 62.10201043651376
+        },
+        "1600": {
+          "mean": 252.16576885988897,
+          "n": 3,
+          "std": 54.914749480783975
+        },
+        "200": {
+          "mean": 1747.136212590992,
+          "n": 3,
+          "std": 238.25245121935103
+        },
+        "400": {
+          "mean": 994.5130349342456,
+          "n": 3,
+          "std": 166.56189476838586
+        },
+        "800": {
+          "mean": 438.0758146098876,
+          "n": 3,
+          "std": 82.94347984227244
+        }
+      },
+      "loss_mean_abs_diff": {
+        "mean": 0.10971972070634366,
+        "n": 3,
+        "std": 0.006283420599668627
+      }
+    },
+    "failure_overlapped": {
+      "l2_by_step": {
+        "1200": {
+          "mean": 319.0742668009666,
+          "n": 3,
+          "std": 63.47806611321286
+        },
+        "1600": {
+          "mean": 290.6193910320308,
+          "n": 3,
+          "std": 56.60448340877401
+        },
+        "200": {
+          "mean": 1710.480746866935,
+          "n": 3,
+          "std": 316.808407843387
+        },
+        "400": {
+          "mean": 987.1226139957174,
+          "n": 3,
+          "std": 119.4002524863654
+        },
+        "800": {
+          "mean": 454.1921997092184,
+          "n": 3,
+          "std": 79.70200185337528
+        }
+      },
+      "loss_mean_abs_diff": {
+        "mean": 0.10583151396363973,
+        "n": 3,
+        "std": 0.004736838210253427
+      }
+    }
+  },
+  "generated_at": "2026-02-16T22:37:38",
+  "num_seeds": 3,
+  "variants": {
+    "failure_blocking": {
+      "correctness": {
+        "all_passed": true,
+        "pass_rate": 1.0
+      },
+      "goodput_steps_per_sec": {
+        "ci95": 1.5168083422333376,
+        "mean": 12.082506600064873,
+        "n": 3,
+        "std": 1.340402609230848
+      },
+      "label": "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_failure_blocking",
+      "num_runs": 3,
+      "replayed_steps": {
+        "ci95": 0.0,
+        "mean": 0.0,
+        "n": 3,
+        "std": 0.0
+      },
+      "restarts": {
+        "ci95": 0.0,
+        "mean": 2.0,
+        "n": 3,
+        "std": 0.0
+      },
+      "run_ids": [
+        "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s1337_failure_blocking",
+        "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s2027_failure_blocking",
+        "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s4242_failure_blocking"
+      ],
+      "runs": [
+        {
+          "correctness_passed": true,
+          "goodput_steps_per_sec": 10.536263190481444,
+          "replayed_steps": 0,
+          "restarts": 2,
+          "run_id": "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s1337_failure_blocking",
+          "snapshot_time_sec_total": 0.023539214278571308,
+          "stall_time_sec_total": 13.687749781180173,
+          "wall_clock_time_sec": 151.85649514198303,
+          "write_time_sec_total": 13.518549244734459
+        },
+        {
+          "correctness_passed": true,
+          "goodput_steps_per_sec": 12.915022274017815,
+          "replayed_steps": 0,
+          "restarts": 2,
+          "run_id": "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s2027_failure_blocking",
+          "snapshot_time_sec_total": 0.022839393583126366,
+          "stall_time_sec_total": 11.32475299644284,
+          "wall_clock_time_sec": 123.88673949241638,
+          "write_time_sec_total": 11.240078780334443
+        },
+        {
+          "correctness_passed": true,
+          "goodput_steps_per_sec": 12.79623433569536,
+          "replayed_steps": 0,
+          "restarts": 2,
+          "run_id": "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s4242_failure_blocking",
+          "snapshot_time_sec_total": 0.022582581383176148,
+          "stall_time_sec_total": 11.280762886046432,
+          "wall_clock_time_sec": 125.03678488731384,
+          "write_time_sec_total": 11.191187350195833
+        }
+      ],
+      "snapshot_time_sec_total": {
+        "ci95": 0.000560278190274369,
+        "mean": 0.02298706308162461,
+        "n": 3,
+        "std": 0.000495117495881607
+      },
+      "stall_time_sec_total": {
+        "ci95": 1.5583934436793752,
+        "mean": 12.097755221223148,
+        "n": 3,
+        "std": 1.3771513380790334
+      },
+      "wall_clock_time_sec": {
+        "ci95": 17.909716770405268,
+        "mean": 133.59333984057108,
+        "n": 3,
+        "std": 15.826805814035872
+      },
+      "write_time_sec_total": {
+        "ci95": 1.5048261865752803,
+        "mean": 11.98327179175491,
+        "n": 3,
+        "std": 1.3298139855655655
+      }
+    },
+    "failure_overlapped": {
+      "correctness": {
+        "all_passed": true,
+        "pass_rate": 1.0
+      },
+      "goodput_steps_per_sec": {
+        "ci95": 1.1155458150201132,
+        "mean": 12.571130355634642,
+        "n": 3,
+        "std": 0.9858071580539125
+      },
+      "label": "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_failure_overlapped",
+      "num_runs": 3,
+      "replayed_steps": {
+        "ci95": 0.0,
+        "mean": 0.0,
+        "n": 3,
+        "std": 0.0
+      },
+      "restarts": {
+        "ci95": 0.0,
+        "mean": 2.0,
+        "n": 3,
+        "std": 0.0
+      },
+      "run_ids": [
+        "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s1337_failure_overlapped",
+        "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s2027_failure_overlapped",
+        "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s4242_failure_overlapped"
+      ],
+      "runs": [
+        {
+          "correctness_passed": true,
+          "goodput_steps_per_sec": 11.449653459563848,
+          "replayed_steps": 0,
+          "restarts": 2,
+          "run_id": "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s1337_failure_overlapped",
+          "snapshot_time_sec_total": 0.024393657338805497,
+          "stall_time_sec_total": 5.946570071741007,
+          "wall_clock_time_sec": 139.7422206401825,
+          "write_time_sec_total": 0.957495555980131
+        },
+        {
+          "correctness_passed": true,
+          "goodput_steps_per_sec": 13.300785740520363,
+          "replayed_steps": 0,
+          "restarts": 2,
+          "run_id": "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s2027_failure_overlapped",
+          "snapshot_time_sec_total": 0.025150052970275283,
+          "stall_time_sec_total": 5.893739708117209,
+          "wall_clock_time_sec": 120.29364514350891,
+          "write_time_sec_total": 0.8958153709536418
+        },
+        {
+          "correctness_passed": true,
+          "goodput_steps_per_sec": 12.962951866819711,
+          "replayed_steps": 0,
+          "restarts": 2,
+          "run_id": "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s4242_failure_overlapped",
+          "snapshot_time_sec_total": 0.02421499800402671,
+          "stall_time_sec_total": 5.884870698908344,
+          "wall_clock_time_sec": 123.42867708206177,
+          "write_time_sec_total": 0.8824524190276861
+        }
+      ],
+      "snapshot_time_sec_total": {
+        "ci95": 0.0005617111554430578,
+        "mean": 0.024586236104369164,
+        "n": 3,
+        "std": 0.0004963838063293854
+      },
+      "stall_time_sec_total": {
+        "ci95": 0.03774808042359613,
+        "mean": 5.908393492922187,
+        "n": 3,
+        "std": 0.03335795570503296
+      },
+      "wall_clock_time_sec": {
+        "ci95": 11.816190509580414,
+        "mean": 127.8215142885844,
+        "n": 3,
+        "std": 10.44196036454411
+      },
+      "write_time_sec_total": {
+        "ci95": 0.04529839943867582,
+        "mean": 0.9119211153204864,
+        "n": 3,
+        "std": 0.04003016802517144
+      }
+    },
+    "reference": {
+      "correctness": {
+        "all_passed": true,
+        "pass_rate": 1.0
+      },
+      "goodput_steps_per_sec": {
+        "ci95": 0.5916478135286466,
+        "mean": 14.33017908275167,
+        "n": 3,
+        "std": 0.5228388128666596
+      },
+      "label": "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_reference",
+      "num_runs": 3,
+      "replayed_steps": {
+        "ci95": 0.0,
+        "mean": 0.0,
+        "n": 3,
+        "std": 0.0
+      },
+      "restarts": {
+        "ci95": 0.0,
+        "mean": 0.0,
+        "n": 3,
+        "std": 0.0
+      },
+      "run_ids": [
+        "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s1337_reference",
+        "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s2027_reference",
+        "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s4242_reference"
+      ],
+      "runs": [
+        {
+          "correctness_passed": true,
+          "goodput_steps_per_sec": 13.74467851150448,
+          "replayed_steps": 0,
+          "restarts": 0,
+          "run_id": "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s1337_reference",
+          "snapshot_time_sec_total": 0.02399799565318972,
+          "stall_time_sec_total": 13.520381471025757,
+          "wall_clock_time_sec": 116.40868854522705,
+          "write_time_sec_total": 13.413594497251324
+        },
+        {
+          "correctness_passed": true,
+          "goodput_steps_per_sec": 14.495445114281953,
+          "replayed_steps": 0,
+          "restarts": 0,
+          "run_id": "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s2027_reference",
+          "snapshot_time_sec_total": 0.023167792009189725,
+          "stall_time_sec_total": 11.709805004182272,
+          "wall_clock_time_sec": 110.37950110435486,
+          "write_time_sec_total": 11.624626542208716
+        },
+        {
+          "correctness_passed": true,
+          "goodput_steps_per_sec": 14.750413622468578,
+          "replayed_steps": 0,
+          "restarts": 0,
+          "run_id": "exp4_matrix_20260216_221349_cifar10_resnet18_fbase_k50_m4_s4242_reference",
+          "snapshot_time_sec_total": 0.02547708002384752,
+          "stall_time_sec_total": 11.245825925958343,
+          "wall_clock_time_sec": 108.47153449058533,
+          "write_time_sec_total": 11.16642141866032
+        }
+      ],
+      "snapshot_time_sec_total": {
+        "ci95": 0.0013236845969213176,
+        "mean": 0.02421428922874232,
+        "n": 3,
+        "std": 0.0011697392729918632
+      },
+      "stall_time_sec_total": {
+        "ci95": 1.3600531701517573,
+        "mean": 12.15867080038879,
+        "n": 3,
+        "std": 1.2018781590295728
+      },
+      "wall_clock_time_sec": {
+        "ci95": 4.6883177303477135,
+        "mean": 111.75324138005574,
+        "n": 3,
+        "std": 4.1430635260144095
+      },
+      "write_time_sec_total": {
+        "ci95": 1.3437198267518378,
+        "mean": 12.068214152706787,
+        "n": 3,
+        "std": 1.187444393403996
+      }
+    }
+  }
+}

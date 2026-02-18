@@ -1,0 +1,66 @@
+$ /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python -m torch.distributed.run --max-restarts 0 --nnodes 1 --nproc_per_node 4 --master_addr 127.0.0.1 --master_port 39771 -m ecrl.train.ddp_train --config results/exp4_matrix_20260216_221349_cifar10_resnet50_fbase_k50_m4/configs/exp4_matrix_20260216_221349_cifar10_resnet50_fbase_k50_m4.yaml --run-id exp4_matrix_20260216_221349_cifar10_resnet50_fbase_k50_m4_s2027_failure_overlapped --results-dir results/exp4_matrix_20260216_221349_cifar10_resnet50_fbase_k50_m4 --target-steps 1600 --checkpoint-strategy overlapped --checkpoint-every 50 --max-inflight 4 --seed 2027 --fail-steps 400,1200 --resume-latest
+[ECRL][resume] path=results/exp4_matrix_20260216_221349_cifar10_resnet50_fbase_k50_m4/checkpoints/exp4_matrix_20260216_221349_cifar10_resnet50_fbase_k50_m4_s2027_failure_overlapped/step_00000400.pt global_step=400 rng_cpu={'type': 'tensor', 'dtype': 'torch.uint8', 'device': 'cuda:0', 'shape': (5056,)}
+[ECRL][fail-inject] step=1200 strategy=overlapped starting pre-exit flush/barrier
+[ECRL][fail-inject] step=1200 flush_done_sec=1.210
+[ECRL][fail-inject] step=1200 close_done_sec=0.675
+[ECRL][fail-inject] step=1200 entering synchronized exit barrier
+[ECRL][fail-inject] step=1200 all ranks exiting with 137 after synchronized flush
+/tmp2/b11902156/miniconda3/envs/ecrl/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+W0217 00:33:54.465000 472004 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 472010 closing signal SIGTERM
+W0217 00:33:54.466000 472004 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 472012 closing signal SIGTERM
+W0217 00:33:54.467000 472004 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 472013 closing signal SIGTERM
+E0217 00:33:54.598000 472004 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 137) local_rank: 1 (pid: 472011) of binary: /tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp2/b11902156/projects/Elastic-Correct-Recovery-Lab/.venv/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+ecrl.train.ddp_train FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-02-17_00:33:54
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 0 (local_rank: 0)
+  exitcode  : 137 (pid: 472010)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2026-02-17_00:33:54
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 2 (local_rank: 2)
+  exitcode  : 137 (pid: 472012)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2026-02-17_00:33:54
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 3 (local_rank: 3)
+  exitcode  : 137 (pid: 472013)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-02-17_00:33:54
+  host      : meow1.csie.ntu.edu.tw
+  rank      : 1 (local_rank: 1)
+  exitcode  : 137 (pid: 472011)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

@@ -1,0 +1,27 @@
+{
+  "checkpoint": {
+    "backpressure_wait_sec_total": 2.2841966710984707e-05,
+    "enqueue_latency_sec_total": 3.798380939173512,
+    "num_events": 35,
+    "snapshot_time_sec_total": 0.02482288342434913,
+    "stall_time_sec_total": 5.299257607082836,
+    "write_time_sec_total": 0.9723287059459835
+  },
+  "final_step": 1600,
+  "goodput_steps_per_sec": 12.17943045761423,
+  "replayed_steps": 0,
+  "restarts": 2,
+  "run_id": "exp4_matrix_20260216_221349_cifar100_resnet18_fbase_k50_m4_s4242_failure_overlapped",
+  "supervisor": {
+    "attempts": 3,
+    "duration_sec": 143.3801989555359,
+    "restarts": 2,
+    "restarts_without_checkpoint_streak": 0,
+    "restarts_without_checkpoint_total": 0,
+    "status": "completed",
+    "target_steps": 1600,
+    "time": 1771264041.6120353
+  },
+  "useful_steps": 1600,
+  "wall_clock_time_sec": 131.36903285980225
+}
